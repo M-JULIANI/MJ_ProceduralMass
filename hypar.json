@@ -1,0 +1,96 @@
+{
+  "$schema": "https://hypar.io/Schemas/Function.json",
+  "id": "38d6e371-c600-40bc-a7b6-4f9e93ff8eee",
+  "name": "MJ_ProceduralMass",
+  "description": "Generates a procedural massing for a residential/office building.",
+  "language": "C#",
+  "model_dependencies": [],
+  "model_output": "ProceduralMass",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "Cell Size": {
+        "multipleOf": 1,
+        "default": 30,
+        "maximum": 100,
+        "description": "Range for size of cell",
+        "type": "number",
+        "$hyparOrder": 1,
+        "minimum": 8
+      },
+      "Perimeter Site Boundary": {
+        "description": "A closed planar polygon.",
+        "default": null,
+        "type": "object",
+        "$hyparOrder": 0,
+        "$ref": "https://hypar.io/Schemas/Geometry/Polygon.json"
+      },
+      "Starting Location": {
+        "multipleOf": 0.01,
+        "default": 0.5,
+        "maximum": 1.0,
+        "description": "Starting cell parameter (from 0.0-1.0)",
+        "type": "number",
+        "$hyparOrder": 1,
+        "minimum": 0.0
+      },
+      "Min Height": {
+        "multipleOf": 1,
+        "default": 50,
+        "maximum": 150,
+        "description": "Min Height for procedural mass.",
+        "type": "number",
+        "$hyparOrder": 3,
+        "minimum": 20
+      },
+      "Max Height": {
+        "multipleOf": 1,
+        "default": 50,
+        "maximum": 100,
+        "description": "Max Height to procedural mass.",
+        "type": "number",
+        "$hyparOrder": 4,
+        "minimum": 0
+      },
+      "Obstacle Polygons": {
+        "description": "List of polygons describing no-go zones.",
+        "default": [],
+        "type": "array",
+        "$hyparOrder": 5,
+        "items": {
+          "name": "Obstacle Polygon",
+          "description": "Polygon describing no-go zones.",
+          "default": null,
+          "type": "object",
+          "$ref": "https://hypar.io/Schemas/Geometry/Polygon.json"
+        }
+      },
+      "Target CellCount": {
+        "multipleOf": 1,
+        "default": 50,
+        "maximum": 100,
+        "description": "Target cell count to cover.",
+        "type": "number",
+        "$hyparOrder": 2,
+        "minimum": 1
+      }
+    }
+  },
+  "outputs": [
+    {
+      "unit_type": "none",
+      "name": "Cells",
+      "description": "Cell count covered",
+      "type": "number"
+    },
+    {
+      "unit_type": "area",
+      "name": "Site Cover",
+      "description": "Site cover",
+      "type": "number"
+    }
+  ],
+  "repository_url": "",
+  "source_file_key": null,
+  "preview_image": null
+}
