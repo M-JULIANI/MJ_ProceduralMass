@@ -52,6 +52,15 @@
         "$hyparOrder": 4,
         "minimum": 0
       },
+      "HeightJitter": {
+        "multipleOf": 0.01,
+        "default": 0.5,
+        "maximum": 1.0,
+        "description": "Height jitter parameter (from 0.0-1.0)",
+        "type": "number",
+        "$hyparOrder": 1,
+        "minimum": 0.0
+      },
       "ObstaclePolygons": {
         "description": "List of polygons describing no-go zones.",
         "default": [],

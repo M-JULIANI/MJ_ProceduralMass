@@ -29,13 +29,13 @@ namespace MJProceduralMass
     {
         [Newtonsoft.Json.JsonConstructor]
         
-        public MJProceduralMassInputs(double @cellSize, Polygon @siteBoundary, double @startingLocation, double @minHeight, double @maxHeight, IList<Polygon> @obstaclePolygons, double @targetCellCount, string bucketName, string uploadsBucket, Dictionary<string, string> modelInputKeys, string gltfKey, string elementsKey, string ifcKey):
+        public MJProceduralMassInputs(double @cellSize, Polygon @siteBoundary, double @startingLocation, double @minHeight, double @maxHeight, double @heightJitter, IList<Polygon> @obstaclePolygons, double @targetCellCount, string bucketName, string uploadsBucket, Dictionary<string, string> modelInputKeys, string gltfKey, string elementsKey, string ifcKey):
         base(bucketName, uploadsBucket, modelInputKeys, gltfKey, elementsKey, ifcKey)
         {
             var validator = Validator.Instance.GetFirstValidatorForType<MJProceduralMassInputs>();
             if(validator != null)
             {
-                validator.PreConstruct(new object[]{ @cellSize, @siteBoundary, @startingLocation, @minHeight, @maxHeight, @obstaclePolygons, @targetCellCount});
+                validator.PreConstruct(new object[]{ @cellSize, @siteBoundary, @startingLocation, @minHeight, @maxHeight, @heightJitter, @obstaclePolygons, @targetCellCount});
             }
         
             this.CellSize = @cellSize;
@@ -43,6 +43,7 @@ namespace MJProceduralMass
             this.StartingLocation = @startingLocation;
             this.MinHeight = @minHeight;
             this.MaxHeight = @maxHeight;
+            this.HeightJitter = @heightJitter;
             this.ObstaclePolygons = @obstaclePolygons;
             this.TargetCellCount = @targetCellCount;
         
@@ -75,6 +76,11 @@ namespace MJProceduralMass
         [Newtonsoft.Json.JsonProperty("MaxHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(0D, 100D)]
         public double MaxHeight { get; set; } = 50D;
+    
+        /// <summary>Height jitter parameter (from 0.0-1.0)</summary>
+        [Newtonsoft.Json.JsonProperty("HeightJitter", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.Range(0.0D, 1.0D)]
+        public double HeightJitter { get; set; } = 0.5D;
     
         /// <summary>List of polygons describing no-go zones.</summary>
         [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
