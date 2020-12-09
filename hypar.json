@@ -9,8 +9,8 @@
   "input_schema": {
     "type": "object",
     "properties": {
-      "Cell Size": {
-        "multipleOf": 1,
+      "CellSize": {
+        "multipleOf": 0.1,
         "default": 30,
         "maximum": 100,
         "description": "Range for size of cell",
@@ -18,14 +18,14 @@
         "$hyparOrder": 1,
         "minimum": 8
       },
-      "Perimeter Site Boundary": {
+      "SiteBoundary": {
         "description": "A closed planar polygon.",
         "default": null,
         "type": "object",
         "$hyparOrder": 0,
         "$ref": "https://hypar.io/Schemas/Geometry/Polygon.json"
       },
-      "Starting Location": {
+      "StartingLocation": {
         "multipleOf": 0.01,
         "default": 0.5,
         "maximum": 1.0,
@@ -34,7 +34,7 @@
         "$hyparOrder": 1,
         "minimum": 0.0
       },
-      "Min Height": {
+      "MinHeight": {
         "multipleOf": 1,
         "default": 50,
         "maximum": 150,
@@ -43,7 +43,7 @@
         "$hyparOrder": 3,
         "minimum": 20
       },
-      "Max Height": {
+      "MaxHeight": {
         "multipleOf": 1,
         "default": 50,
         "maximum": 100,
@@ -52,7 +52,7 @@
         "$hyparOrder": 4,
         "minimum": 0
       },
-      "Obstacle Polygons": {
+      "ObstaclePolygons": {
         "description": "List of polygons describing no-go zones.",
         "default": [],
         "type": "array",
@@ -65,7 +65,7 @@
           "$ref": "https://hypar.io/Schemas/Geometry/Polygon.json"
         }
       },
-      "Target CellCount": {
+      "TargetCellCount": {
         "multipleOf": 1,
         "default": 50,
         "maximum": 100,

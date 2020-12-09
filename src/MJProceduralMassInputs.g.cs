@@ -29,17 +29,17 @@ namespace MJProceduralMass
     {
         [Newtonsoft.Json.JsonConstructor]
         
-        public MJProceduralMassInputs(double @cellSize, Polygon @perimeterSiteBoundary, double @startingLocation, double @minHeight, double @maxHeight, IList<Polygon> @obstaclePolygons, double @targetCellCount, string bucketName, string uploadsBucket, Dictionary<string, string> modelInputKeys, string gltfKey, string elementsKey, string ifcKey):
+        public MJProceduralMassInputs(double @cellSize, Polygon @siteBoundary, double @startingLocation, double @minHeight, double @maxHeight, IList<Polygon> @obstaclePolygons, double @targetCellCount, string bucketName, string uploadsBucket, Dictionary<string, string> modelInputKeys, string gltfKey, string elementsKey, string ifcKey):
         base(bucketName, uploadsBucket, modelInputKeys, gltfKey, elementsKey, ifcKey)
         {
             var validator = Validator.Instance.GetFirstValidatorForType<MJProceduralMassInputs>();
             if(validator != null)
             {
-                validator.PreConstruct(new object[]{ @cellSize, @perimeterSiteBoundary, @startingLocation, @minHeight, @maxHeight, @obstaclePolygons, @targetCellCount});
+                validator.PreConstruct(new object[]{ @cellSize, @siteBoundary, @startingLocation, @minHeight, @maxHeight, @obstaclePolygons, @targetCellCount});
             }
         
             this.CellSize = @cellSize;
-            this.PerimeterSiteBoundary = @perimeterSiteBoundary;
+            this.SiteBoundary = @siteBoundary;
             this.StartingLocation = @startingLocation;
             this.MinHeight = @minHeight;
             this.MaxHeight = @maxHeight;
@@ -53,35 +53,35 @@ namespace MJProceduralMass
         }
     
         /// <summary>Range for size of cell</summary>
-        [Newtonsoft.Json.JsonProperty("Cell Size", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("CellSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(8D, 100D)]
         public double CellSize { get; set; } = 30D;
     
         /// <summary>A closed planar polygon.</summary>
-        [Newtonsoft.Json.JsonProperty("Perimeter Site Boundary", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Polygon PerimeterSiteBoundary { get; set; }
+        [Newtonsoft.Json.JsonProperty("SiteBoundary", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public Polygon SiteBoundary { get; set; }
     
         /// <summary>Starting cell parameter (from 0.0-1.0)</summary>
-        [Newtonsoft.Json.JsonProperty("Starting Location", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("StartingLocation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(0.0D, 1.0D)]
         public double StartingLocation { get; set; } = 0.5D;
     
         /// <summary>Min Height for procedural mass.</summary>
-        [Newtonsoft.Json.JsonProperty("Min Height", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("MinHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(20D, 150D)]
         public double MinHeight { get; set; } = 50D;
     
         /// <summary>Max Height to procedural mass.</summary>
-        [Newtonsoft.Json.JsonProperty("Max Height", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("MaxHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(0D, 100D)]
         public double MaxHeight { get; set; } = 50D;
     
         /// <summary>List of polygons describing no-go zones.</summary>
-        [Newtonsoft.Json.JsonProperty("Obstacle Polygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public IList<Polygon> ObstaclePolygons { get; set; }
     
         /// <summary>Target cell count to cover.</summary>
-        [Newtonsoft.Json.JsonProperty("Target CellCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("TargetCellCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(1D, 100D)]
         public double TargetCellCount { get; set; } = 50D;
     
