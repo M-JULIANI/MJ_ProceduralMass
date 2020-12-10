@@ -78,6 +78,27 @@ namespace MJProceduralMass
                 // RhinoApp.WriteLine((remapped).ToString());
             }
 
+            //   var Centerline = input.Centerline;
+            // var perimeter = Centerline.Offset(input.BarWidth / 2, EndType.Butt).First();
+
+            for (int k = 0; k < grid.finalTree.Count; k++)
+            {
+             Polygon.Union(grid.finalTree[k], 0.1);
+                //;
+            }
+
+            // // Create the foundation Envelope.
+            // var extrude = new Elements.Geometry.Solids.Extrude(perimeter, input.FoundationDepth, Vector3.ZAxis, false);
+            // var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
+            // var fndMatl = new Material("foundation", new Color(0.6, 0.60000002384185791, 0.6, 1), 0.0f, 0.0f);
+            // var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
+            // var envelopes = new List<Envelope>()
+            // {
+            //     new Envelope(perimeter, input.FoundationDepth * -1, input.FoundationDepth, Vector3.ZAxis,
+            //                  0.0, new Transform(0.0, 0.0, input.FoundationDepth * -1), fndMatl, geomRep, false, Guid.NewGuid(), "")
+            // };
+
+
             var output = new MJProceduralMassOutputs();
 
             //output.Model.AddElement(mc);
@@ -85,6 +106,8 @@ namespace MJProceduralMass
             // Construct a mass from which we will measure
             // distance to the analysis mesh's cells.
             var mass = new Mass(Polygon.Rectangle(1, 1));
+            
+           
             mass.Transform.Move(center);
             output.Model.AddElement(mass);
 
