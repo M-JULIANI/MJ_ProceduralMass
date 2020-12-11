@@ -11,7 +11,7 @@ namespace MJProceduralMass
       {
       private List<(BBox3 cell, double value)> _results = new List<(BBox3 cell, double value)>();
 
-       public SortedDictionary<Vector2dInt, sCell> cells = new SortedDictionary<Vector2dInt, sCell>();
+       public Dictionary<Vector2dInt, sCell> cells = new Dictionary<Vector2dInt, sCell>();
 
        public List<sCell> grownTree;
        private List<List<sCell>> treeRects;
@@ -192,7 +192,7 @@ namespace MJProceduralMass
                 var valList = cells.Values.ToList();
                 var keyList = cells.Keys.ToList();
 
-                var tempDict = new SortedDictionary<Vector2dInt, sCell>();
+                var tempDict = new Dictionary<Vector2dInt, sCell>();
                 for (int i = 0; i < valList.Count; i++)
                 {
                     if (grownTree.Contains(valList[i]))
@@ -215,7 +215,7 @@ namespace MJProceduralMass
         }
      
      //should be run using the parent dictionary(cells)
-        public List<sCell> CheckPlacementLocations(sCell cell, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> listCells, out string debugger)
+        public List<sCell> CheckPlacementLocations(sCell cell, Dictionary<Vector2dInt, sCell> dict, List<sCell> listCells, out string debugger)
         {
             var neighbors = new List<sCell>();
             debugger = "all not so good";
@@ -289,7 +289,7 @@ namespace MJProceduralMass
 
         }
 
-         public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell)
+         public bool ReturnOne(List<sCell> listCells, Dictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell)
         {
             bool canDo = false;
             outputCell = new sCell();
@@ -307,7 +307,7 @@ namespace MJProceduralMass
 
         }
 
-         public void ProcessGroups(SortedDictionary<Vector2dInt, sCell> dict, int goal)
+         public void ProcessGroups(Dictionary<Vector2dInt, sCell> dict, int goal)
         {
             treeRects = new List<List<sCell>>();
             var tempList = new List<sCell>();

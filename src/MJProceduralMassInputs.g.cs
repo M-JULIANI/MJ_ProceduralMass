@@ -60,8 +60,8 @@ namespace MJProceduralMass
     
         /// <summary>Min Height for procedural mass.</summary>
         [Newtonsoft.Json.JsonProperty("MinHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(20D, 150D)]
-        public double MinHeight { get; set; } = 50D;
+        [System.ComponentModel.DataAnnotations.Range(20D, 50D)]
+        public double MinHeight { get; set; } = 34D;
     
         /// <summary>A closed planar polygon.</summary>
         [Newtonsoft.Json.JsonProperty("SiteBoundary", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -84,8 +84,8 @@ namespace MJProceduralMass
     
         /// <summary>Max Height to procedural mass.</summary>
         [Newtonsoft.Json.JsonProperty("MaxHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(0D, 100D)]
-        public double MaxHeight { get; set; } = 50D;
+        [System.ComponentModel.DataAnnotations.Range(0D, 150D)]
+        public double MaxHeight { get; set; } = 82D;
     
         /// <summary>List of polygons describing no-go zones.</summary>
         [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]

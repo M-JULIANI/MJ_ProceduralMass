@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using Elements.Analysis;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MJProceduralMass
 {
@@ -59,6 +60,11 @@ namespace MJProceduralMass
         public override int GetHashCode()
         {
             return Tuple.Create(x, y).GetHashCode();
+        }
+
+        public int CompareTo([AllowNull] Vector2dInt other)
+        {
+            throw new NotImplementedException();
         }
 
         public static bool operator ==(Vector2dInt vec1, Vector2dInt vec2)

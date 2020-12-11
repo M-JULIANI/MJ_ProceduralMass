@@ -22,14 +22,13 @@ namespace MJProceduralMass
              // Construct a color scale from a small number
             // of colors.
             var colorScale = new ColorScale(new List<Color>() { Colors.Cyan, Colors.Purple, Colors.Orange }, 10);
-            var perimeter1 = Polygon.L(10, 10, 3);
-            var center = perimeter1.Centroid();
+            var center = input.SiteBoundary.Centroid();
             var analyze = new Func<Vector3, double>((v) =>
             {
               return center.DistanceTo(v);
             });
             
-            sGrid grid = new sGrid(perimeter1, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze);
+            sGrid grid = new sGrid(input.SiteBoundary, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze);
 
             grid.InitCells();
             
@@ -89,8 +88,7 @@ namespace MJProceduralMass
                  new Vector3(s.rect.Min.X, s.rect.Min.Y, 0),
                  new Vector3(s.rect.Min.X, s.rect.Max.Y, 0),
                   new Vector3(s.rect.Max.X, s.rect.Max.Y, 0),
-                  new Vector3(s.rect.Max.X, s.rect.Min.Y, 0),
-
+                  new Vector3(s.rect.Max.X, s.rect.Min.Y, 0)
              })).ToArray(), 0.1);
 
                 var profile = new Profile(polyUnioned);

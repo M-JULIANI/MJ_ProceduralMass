@@ -7,19 +7,23 @@ using System.IO;
 using Newtonsoft.Json;
 using Elements;
 
-namespace ACADIAHeatMap
+namespace MJProceduralMass
 {
 public class TestExecute
     {
         [Fact]
         public void RunTest()
         {
-            // var envJson = File.ReadAllText("../../../envModel.json");
-            // var modPtJson = File.ReadAllText("../../../modelPoints.json");
 
-            // var envModel = JsonConvert.DeserializeObject<Model>(envJson);
-            // var modPoints = JsonConvert.DeserializeObject<Model>(modPtJson);
-            // //var polyline = new Polygon(new List<Vector3>{new Vector3(-2, -3), new Vector3(5,-4), new Vector3(3,4), new Vector3(-5,6)});
+            var boundary = new Polygon(new List<Vector3>{new Vector3(-20, -30), new Vector3(50,-40), new Vector3(30,40), new Vector3(-50,60)});
+
+
+            var input = new MJProceduralMassInputs(20,
+            15, boundary, 0.5, 20, 4.5, 45, null, "", "", null, "", "", "");
+
+            var output = MJProceduralMass.Execute(new Dictionary<string, Model>{}, input);
+
+            output.Model.ToGlTF("../../../myOutput.gltf", false);
             // var input = new ACADIAHeatMapInputs(3.0, "", "", null, "", "", "");
             // var output = ACADIAHeatMap.Execute(new Dictionary<string, Model>{{"Envelope", envModel}, {"BlobData", modPoints}}, input);
             // output.Model.ToGlTF("../../../myOutput.gltf", false);
