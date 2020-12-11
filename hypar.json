@@ -6,85 +6,7 @@
   "language": "C#",
   "model_dependencies": [],
   "model_output": "ProceduralMass",
-  "input_schema": {
-    "type": "object",
-    "properties": {
-      "CellSize": {
-        "multipleOf": 0.1,
-        "default": 30,
-        "maximum": 100,
-        "description": "Range for size of cell",
-        "type": "number",
-        "$hyparOrder": 1,
-        "minimum": 8
-      },
-      "SiteBoundary": {
-        "description": "A closed planar polygon.",
-        "default": null,
-        "type": "object",
-        "$hyparOrder": 0,
-        "$ref": "https://hypar.io/Schemas/Geometry/Polygon.json"
-      },
-      "StartingLocation": {
-        "multipleOf": 0.01,
-        "default": 0.5,
-        "maximum": 1.0,
-        "description": "Starting cell parameter (from 0.0-1.0)",
-        "type": "number",
-        "$hyparOrder": 1,
-        "minimum": 0.0
-      },
-      "MinHeight": {
-        "multipleOf": 1,
-        "default": 50,
-        "maximum": 150,
-        "description": "Min Height for procedural mass.",
-        "type": "number",
-        "$hyparOrder": 3,
-        "minimum": 20
-      },
-      "MaxHeight": {
-        "multipleOf": 1,
-        "default": 50,
-        "maximum": 100,
-        "description": "Max Height to procedural mass.",
-        "type": "number",
-        "$hyparOrder": 4,
-        "minimum": 0
-      },
-      "HeightJitter": {
-        "multipleOf": 0.01,
-        "default": 0.5,
-        "maximum": 1.0,
-        "description": "Height jitter parameter (from 0.0-1.0)",
-        "type": "number",
-        "$hyparOrder": 1,
-        "minimum": 0.0
-      },
-      "ObstaclePolygons": {
-        "description": "List of polygons describing no-go zones.",
-        "default": [],
-        "type": "array",
-        "$hyparOrder": 5,
-        "items": {
-          "name": "Obstacle Polygon",
-          "description": "Polygon describing no-go zones.",
-          "default": null,
-          "type": "object",
-          "$ref": "https://hypar.io/Schemas/Geometry/Polygon.json"
-        }
-      },
-      "TargetCellCount": {
-        "multipleOf": 1,
-        "default": 50,
-        "maximum": 100,
-        "description": "Target cell count to cover.",
-        "type": "number",
-        "$hyparOrder": 2,
-        "minimum": 1
-      }
-    }
-  },
+  "input_schema": {"type":"object","properties":{"TargetCellCount":{"multipleOf":1,"default":50,"maximum":100,"description":"Target cell count to cover.","type":"number","$hyparOrder":3,"minimum":1},"MinHeight":{"multipleOf":1,"default":50,"maximum":150,"description":"Min Height for procedural mass.","type":"number","$hyparOrder":4,"minimum":20},"SiteBoundary":{"description":"A closed planar polygon.","default":null,"type":"object","$hyparOrder":0,"$ref":"https://hypar.io/Schemas/Geometry/Polygon.json"},"StartingLocation":{"multipleOf":0.01,"default":0.5,"maximum":1,"description":"Starting cell parameter (from 0.0-1.0)","type":"number","$hyparOrder":1,"minimum":0},"HeightJitter":{"multipleOf":1,"default":50,"maximum":100,"description":"Height randomness","type":"number","$hyparOrder":6,"minimum":0},"CellSize":{"multipleOf":0.1,"default":30,"maximum":100,"description":"Range for size of cell","type":"number","$hyparOrder":2,"minimum":8},"MaxHeight":{"multipleOf":1,"default":50,"maximum":100,"description":"Max Height to procedural mass.","type":"number","$hyparOrder":5,"minimum":0},"ObstaclePolygons":{"description":"List of polygons describing no-go zones.","default":[],"type":"array","$hyparOrder":7,"items":{"name":"Obstacle Polygon","description":"Polygon describing no-go zones.","default":null,"type":"object","$ref":"https://hypar.io/Schemas/Geometry/Polygon.json"}}}},
   "outputs": [
     {
       "unit_type": "none",
@@ -98,6 +20,9 @@
       "description": "Site cover",
       "type": "number"
     }
+  ],
+  "element_types": [
+    "https://prod-api.hypar.io/schemas/Envelope"
   ],
   "repository_url": "",
   "source_file_key": null,

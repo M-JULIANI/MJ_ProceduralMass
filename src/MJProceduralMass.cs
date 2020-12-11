@@ -36,6 +36,7 @@ namespace MJProceduralMass
             
             //init start index
             var elligibleCells = grid.cells.Values.Select(s => s).ToList();
+            var totalCells = grid.cells.Count;
             int startIndex = (int)(elligibleCells.Count * input.StartingLocation);
 
             if (startIndex >= elligibleCells.Count)
@@ -63,7 +64,7 @@ namespace MJProceduralMass
                 // RhinoApp.WriteLine((increment * i).ToString());
             }
 
-            var jitteredHeights = Jitter(rangeVals, input.HeightJitter);
+            var jitteredHeights = Jitter(rangeVals, input.HeightJitter * 0.01);
             var jitterMin = jitteredHeights.Min();
             var jitterMax = jitteredHeights.Max();
 
@@ -81,35 +82,45 @@ namespace MJProceduralMass
             //   var Centerline = input.Centerline;
             // var perimeter = Centerline.Offset(input.BarWidth / 2, EndType.Butt).First();
 
+            var envelopes = new List<Envelope>();
             for (int k = 0; k < grid.finalTree.Count; k++)
             {
-             Polygon.Union(grid.finalTree[k], 0.1);
-                //;
+                var polyUnioned = Polygon.UnionAll(grid.finalTree[k].Select(s => new Polygon(new List<Vector3>(){
+                 new Vector3(s.rect.Min.X, s.rect.Min.Y, 0),
+                 new Vector3(s.rect.Min.X, s.rect.Max.Y, 0),
+                  new Vector3(s.rect.Max.X, s.rect.Max.Y, 0),
+                  new Vector3(s.rect.Max.X, s.rect.Min.Y, 0),
+
+             })).ToArray(), 0.1);
+
+                var profile = new Profile(polyUnioned);
+
+                var extrude = new Elements.Geometry.Solids.Extrude(profile, remappedVals[k], Vector3.ZAxis, false);
+                var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
+
+                var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
+
+
+                envelopes.Add(new Envelope(profile, 0.0, remappedVals[k], Vector3.ZAxis, 0.0, new Transform(), envMatl, geomRep, false, Guid.NewGuid(), ""));
             }
 
-            // // Create the foundation Envelope.
-            // var extrude = new Elements.Geometry.Solids.Extrude(perimeter, input.FoundationDepth, Vector3.ZAxis, false);
-            // var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
-            // var fndMatl = new Material("foundation", new Color(0.6, 0.60000002384185791, 0.6, 1), 0.0f, 0.0f);
-            // var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
-            // var envelopes = new List<Envelope>()
-            // {
-            //     new Envelope(perimeter, input.FoundationDepth * -1, input.FoundationDepth, Vector3.ZAxis,
-            //                  0.0, new Transform(0.0, 0.0, input.FoundationDepth * -1), fndMatl, geomRep, false, Guid.NewGuid(), "")
-            // };
-
-
-            var output = new MJProceduralMassOutputs();
+            var siteCover = elligibleCells.Count/(totalCells * 1.0);
+            var output = new MJProceduralMassOutputs(elligibleCells.Count, siteCover);
 
             //output.Model.AddElement(mc);
 
+             output.Model.AddElements(envelopes);
+            //var sketch = new Sketch(input.Centerline, Guid.NewGuid(), //"Centerline Sketch");
+            //output.Model.AddElement(sketch);
+            //return output;
+
             // Construct a mass from which we will measure
             // distance to the analysis mesh's cells.
-            var mass = new Mass(Polygon.Rectangle(1, 1));
+           // var mass = new Mass(Polygon.Rectangle(1, 1));
             
            
-            mass.Transform.Move(center);
-            output.Model.AddElement(mass);
+            //mass.Transform.Move(center);
+            //output.Model.AddElement(mass);
 
             // The analyze function computes the distance
             // to the attractor.
@@ -117,8 +128,8 @@ namespace MJProceduralMass
 
          
 
-            var analysisMesh = new AnalysisMesh(perimeter1, 0.2, 0.2, colorScale, analyze);
-            analysisMesh.Analyze();
+            //var analysisMesh = new AnalysisMesh(perimeter1, 0.2, 0.2, //colorScale, analyze);
+            //analysisMesh.Analyze();
 
             return output;
         }
