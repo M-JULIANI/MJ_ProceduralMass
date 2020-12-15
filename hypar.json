@@ -5,8 +5,8 @@
   "description": "Generates a procedural massing for a residential/office building.",
   "language": "C#",
   "model_dependencies": [],
-  "model_output": "ProceduralMass",
-  "input_schema": {"type":"object","properties":{"TargetCellCount":{"multipleOf":1,"default":50,"maximum":100,"description":"Target cell count to cover.","type":"number","$hyparOrder":3,"minimum":1},"MinHeight":{"multipleOf":1,"default":34,"maximum":50,"description":"Min Height for procedural mass.","type":"number","$hyparOrder":4,"minimum":20},"SiteBoundary":{"description":"A closed planar polygon.","default":null,"type":"object","$hyparOrder":0,"$ref":"https://hypar.io/Schemas/Geometry/Polygon.json"},"StartingLocation":{"multipleOf":0.01,"default":0.5,"maximum":1,"description":"Starting cell parameter (from 0.0-1.0)","type":"number","$hyparOrder":1,"minimum":0},"HeightJitter":{"multipleOf":1,"default":50,"maximum":100,"description":"Height randomness","type":"number","$hyparOrder":6,"minimum":0},"CellSize":{"multipleOf":0.1,"default":30,"maximum":100,"description":"Range for size of cell","type":"number","$hyparOrder":2,"minimum":8},"MaxHeight":{"multipleOf":1,"default":82,"maximum":150,"description":"Max Height to procedural mass.","type":"number","$hyparOrder":5,"minimum":0},"ObstaclePolygons":{"description":"List of polygons describing no-go zones.","default":[],"type":"array","$hyparOrder":7,"items":{"name":"Obstacle Polygon","description":"Polygon describing no-go zones.","default":null,"type":"object","$ref":"https://hypar.io/Schemas/Geometry/Polygon.json"}}}},
+  "model_output": "envelope",
+  "input_schema": {"type":"object","properties":{"TargetCellCount":{"multipleOf":1,"default":50,"maximum":100,"description":"Target cell count to cover.","type":"number","$hyparOrder":4,"minimum":1},"MinHeight":{"multipleOf":1,"default":34,"maximum":50,"description":"Min Height for procedural mass.","type":"number","$hyparOrder":5,"minimum":20},"SiteBoundary":{"description":"A closed planar polygon.","default":null,"type":"object","$hyparOrder":0,"$ref":"https://hypar.io/Schemas/Geometry/Polygon.json"},"StartingLocation":{"multipleOf":0.01,"default":0.5,"maximum":1,"description":"Starting cell parameter (from 0.0-1.0)","type":"number","$hyparOrder":2,"minimum":0},"HeightJitter":{"multipleOf":1,"default":50,"maximum":100,"description":"Height randomness","type":"number","$hyparOrder":7,"minimum":0},"CellSize":{"multipleOf":0.1,"default":30,"maximum":100,"description":"Range for size of cell","type":"number","$hyparOrder":3,"minimum":8},"MaxHeight":{"multipleOf":1,"default":82,"maximum":150,"description":"Max Height to procedural mass.","type":"number","$hyparOrder":6,"minimum":0},"ObstaclePolygons":{"description":"List of polygons describing no-go zones.","default":[null],"type":"array","$hyparOrder":1,"items":{"name":"Obstacle Polygon","description":"Polygon describing no-go zones.","default":null,"type":"object","$ref":"https://hypar.io/Schemas/Geometry/Polygon.json"}}}},
   "outputs": [
     {
       "unit_type": "none",
@@ -15,10 +15,9 @@
       "type": "number"
     },
     {
-      "unit_type": "area",
       "name": "Site Cover",
       "description": "Site cover",
-      "type": "number"
+      "type": "string"
     }
   ],
   "element_types": [

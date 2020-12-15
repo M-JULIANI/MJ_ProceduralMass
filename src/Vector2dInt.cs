@@ -10,17 +10,19 @@ namespace MJProceduralMass
 {
     ///////////////////////////
       /// Vector2dInt class
-       public struct Vector2dInt: IEquatable<Vector2dInt>
+       public struct Vector2dInt: IEquatable<Vector2dInt>, IComparable<Vector2dInt>
     { 
         private int x { get; set; }
         public int X { get { return x; }} 
         private int y { get; set; }
         public int Y { get { return y; } }
+        int pos;
 
         public Vector2dInt(int x, int y)
         {
             this.x = x;
             this.y = y;
+            pos = x*10 + y *100;
         }
 
         public static Vector2dInt operator -(Vector2dInt vec1, Vector2dInt vec2)
@@ -64,7 +66,32 @@ namespace MJProceduralMass
 
         public int CompareTo([AllowNull] Vector2dInt other)
         {
-            throw new NotImplementedException();
+            if (other == null) return 1;
+             return pos.CompareTo(other.pos);
+        }
+
+        // Define the is greater than operator.
+    public static bool operator >  (Vector2dInt operand1, Vector2dInt operand2)
+    {
+       return operand1.CompareTo(operand2) == 1;
+    }
+
+    // Define the is less than operator.
+    public static bool operator <  (Vector2dInt operand1, Vector2dInt operand2)
+    {
+       return operand1.CompareTo(operand2) == -1;
+    }
+
+    // Define the is greater than or equal to operator.
+    public static bool operator >=  (Vector2dInt operand1, Vector2dInt operand2)
+    {
+       return operand1.CompareTo(operand2) >= 0;
+    }
+
+        // Define the is less than or equal to operator.
+        public static bool operator <=(Vector2dInt operand1, Vector2dInt operand2)
+        {
+            return operand1.CompareTo(operand2) <= 0;
         }
 
         public static bool operator ==(Vector2dInt vec1, Vector2dInt vec2)

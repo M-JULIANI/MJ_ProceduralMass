@@ -19,22 +19,33 @@ namespace MJProceduralMass
         /// <returns>A MJProceduralMassOutputs instance containing computed results and the model with any new elements.</returns>
         public static MJProceduralMassOutputs Execute(Dictionary<string, Model> inputModels, MJProceduralMassInputs input)
         {
-             // Construct a color scale from a small number
-            // of colors.
+
             var colorScale = new ColorScale(new List<Color>() { Colors.Cyan, Colors.Purple, Colors.Orange }, 10);
             var center = input.SiteBoundary.Centroid();
             var analyze = new Func<Vector3, double>((v) =>
             {
               return center.DistanceTo(v);
             });
-            
-            sGrid grid = new sGrid(input.SiteBoundary, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze);
 
-            grid.InitCells();
+            Console.WriteLine("Greetings");
+            var envelopes = new List<Envelope>();
+             //trying stuff..
+            var polys = new List<ModelCurve>();
+            var elligibleCells = new List<sCell>();
+            sGrid grid = null;
+             try{
+            
+            grid = new sGrid(input.SiteBoundary, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze, input.ObstaclePolygons);
+
+            if(input.ObstaclePolygons == null)
+                grid.InitCells(false);
+            else
+                grid.InitCells(true);
             
             
             //init start index
-            var elligibleCells = grid.cells.Values.Select(s => s).ToList();
+            elligibleCells = grid.cells.Values.Select(s => s).ToList();
+
             var totalCells = grid.cells.Count;
             int startIndex = (int)(elligibleCells.Count * input.StartingLocation);
 
@@ -43,25 +54,18 @@ namespace MJProceduralMass
 
             var selected = elligibleCells[startIndex];
 
+            Console.WriteLine("start index:" + startIndex);
+
             grid.Run(selected);
 
-            // var perimeter2 = Polygon.Ngon(5, 5);
-            // var move = new Transform(3, 7, 0);
-            // var perimeter = perimeter1.Union((Polygon)perimeter2.Transformed(move));
-            // var mc = new ModelCurve(perimeter);
 
-            var branchCount = grid.finalTree.Count;
+            var branchCount = grid.treeRects.Count;
             var increment = 1.0/ branchCount;
 
             /////JITTERVALS
             var rangeVals = new List<double>();
-            //RhinoApp.WriteLine("range vals:");
             for (int i = 0; i < branchCount + 1; i++)
-            {
                 rangeVals.Add(increment * i);
-
-                // RhinoApp.WriteLine((increment * i).ToString());
-            }
 
             var jitteredHeights = Jitter(rangeVals, input.HeightJitter * 0.01);
             var jitterMin = jitteredHeights.Min();
@@ -74,60 +78,62 @@ namespace MJProceduralMass
                 // RhinoApp.WriteLine("raw jitter: " + (jitteredHeights[i]).ToString());
                 var remapped = mapValue(jitteredHeights[i], jitterMin, jitterMax, input.MinHeight, input.MaxHeight);
                 remappedVals.Add(remapped);
-
-                // RhinoApp.WriteLine((remapped).ToString());
             }
 
-            //   var Centerline = input.Centerline;
-            // var perimeter = Centerline.Offset(input.BarWidth / 2, EndType.Butt).First();
+            Console.WriteLine("Overall branch count: "+ grid.finalTree.Keys.Count);
 
-            var envelopes = new List<Envelope>();
-            for (int k = 0; k < grid.finalTree.Count; k++)
+                var keyList = grid.finalTree.Keys.Count;
+
+
+
+                for (int k = 0; k < grid.finalTree.Keys.Count; k++)
+                {
+                    var tempPolys = new List<Polygon>();
+                    var listOfCells = grid.finalTree.Values.ToArray();
+                    var cellCount = listOfCells[k].Count;
+                    for (int j = 0; j < cellCount; j++)
+                    {
+                        Console.WriteLine($"x: {listOfCells[k][j].index.X} y: {listOfCells[k][j].index.Y}");
+                        var poly = new Polygon(new List<Vector3>(){
+                 new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Min.Y),
+                 new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Max.Y),
+                  new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Max.Y),
+                  new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Min.Y)});
+                        tempPolys.Add(poly);
+                    }
+                    var polyUnioned = Polygon.UnionAll(tempPolys, 0.01);
+                    polys.Add(new ModelCurve(polyUnioned[0]));
+
+                    var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
+
+
+                    var profile = new Profile(polyUnioned);
+                    //trying stuff..
+                    var extrude = new Elements.Geometry.Solids.Extrude(profile, remappedVals[k], Vector3.ZAxis, false);
+                    var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
+
+                    envelopes.Add(new Envelope(profile, 0.0, remappedVals[k], Vector3.ZAxis, 0.0, new Transform(), envMatl, geomRep, false, Guid.NewGuid(), ""));
+
+                }
+
+            }
+            catch (Exception e)
             {
-                var polyUnioned = Polygon.UnionAll(grid.finalTree[k].Select(s => new Polygon(new List<Vector3>(){
-                 new Vector3(s.rect.Min.X, s.rect.Min.Y, 0),
-                 new Vector3(s.rect.Min.X, s.rect.Max.Y, 0),
-                  new Vector3(s.rect.Max.X, s.rect.Max.Y, 0),
-                  new Vector3(s.rect.Max.X, s.rect.Min.Y, 0)
-             })).ToArray(), 0.1);
-
-                var profile = new Profile(polyUnioned);
-
-                var extrude = new Elements.Geometry.Solids.Extrude(profile, remappedVals[k], Vector3.ZAxis, false);
-                var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
-
-                var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
-
-
-                envelopes.Add(new Envelope(profile, 0.0, remappedVals[k], Vector3.ZAxis, 0.0, new Transform(), envMatl, geomRep, false, Guid.NewGuid(), ""));
+                Console.WriteLine(e.ToString());
             }
 
-            var siteCover = elligibleCells.Count/(totalCells * 1.0);
-            var output = new MJProceduralMassOutputs(elligibleCells.Count, siteCover);
+            var siteCover = string.Format("{0}%", grid.grownTree.Count/(elligibleCells.Count * 1.0));
+            var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover);
 
-            //output.Model.AddElement(mc);
+            output.Model.AddElements(envelopes);
 
-             output.Model.AddElements(envelopes);
-            //var sketch = new Sketch(input.Centerline, Guid.NewGuid(), //"Centerline Sketch");
-            //output.Model.AddElement(sketch);
-            //return output;
+            //output.Model.AddElements(polys);
 
-            // Construct a mass from which we will measure
-            // distance to the analysis mesh's cells.
-           // var mass = new Mass(Polygon.Rectangle(1, 1));
-            
-           
-            //mass.Transform.Move(center);
-            //output.Model.AddElement(mass);
+            output.Model.AddElement(new ModelCurve(input.SiteBoundary));
 
-            // The analyze function computes the distance
-            // to the attractor.
+             var greenMat = new Material("greenery", new Color(0.329, 1.0, 0.239, 0.6), 0.0f, 0.0f);
 
-
-         
-
-            //var analysisMesh = new AnalysisMesh(perimeter1, 0.2, 0.2, //colorScale, analyze);
-            //analysisMesh.Analyze();
+            output.Model.AddElements(input.ObstaclePolygons.Select(s=>new Mass(s, 1, greenMat)));
 
             return output;
         }

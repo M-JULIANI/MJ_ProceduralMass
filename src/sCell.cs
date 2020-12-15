@@ -13,6 +13,7 @@ namespace MJProceduralMass
             public Vector2dInt index;
             public double _resolution;
             public BBox3 rect;
+            public Polygon polyCrv;
             public bool isActive { get; set; }
 
             public sCell Parent;
@@ -26,16 +27,17 @@ namespace MJProceduralMass
             {
                 this._resolution = _resolution;
                 this.location = location;
-                int roundedX = (int)Math.Round(location.X);
-                roundedX *= 5;
-                int roundedY = (int)Math.Round(location.Y);
-                roundedY *= 5;
-
-                //index = new Vector2d(Math.Round(roundedX / this._resolution * 5.0), Math.Round(roundedX / this._resolution * 5.0));
   
                 index = new Vector2dInt((int)Math.Round(location.X / this._resolution), (int)Math.Round(location.Y / this._resolution));
 
-                rect = new BBox3(new Vector3(location.X, location.Y), new Vector3(location.X + this._resolution, location.Y + this._resolution));
+                rect = new BBox3(new Vector3(location.X - (this._resolution * 0.5), location.Y - (this._resolution * 0.5)), new Vector3(location.X + (this._resolution * 0.5), location.Y + (this._resolution * 0.5)));
+                this.polyCrv = new Polygon(new List<Vector3>()
+                {
+                     new Vector3(rect.Min.X, rect.Min.Y),
+                 new Vector3(rect.Min.X, rect.Max.Y),
+                  new Vector3(rect.Max.X, rect.Max.Y),
+                  new Vector3(rect.Max.X, rect.Min.Y)
+                  });
                 isActive = false;
             }
       }

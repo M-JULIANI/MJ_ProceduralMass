@@ -13,5 +13,5 @@ Generates a procedural massing for a residential/office building.
 |Output Name|Type|Description|
 |---|---|---|
 |Cells|Number|Cell count covered|
-|Site Cover|Number|Site cover|
+|Site Cover|String|Site cover|
 

@@ -26,7 +26,7 @@ namespace MJProceduralMass
 		/// Site cover
 		/// </summary>
 		[JsonProperty("Site Cover")]
-		public double SiteCover {get;}
+		public string SiteCover {get;}
 
 
 
@@ -45,7 +45,7 @@ namespace MJProceduralMass
         /// </summary>
         /// <returns></returns>
         [JsonConstructor]
-        public MJProceduralMassOutputs(double cells, double siteCover): base()
+        public MJProceduralMassOutputs(double cells, string siteCover): base()
         {
 			this.Cells = cells;
 			this.SiteCover = siteCover;
