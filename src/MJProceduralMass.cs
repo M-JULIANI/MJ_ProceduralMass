@@ -6,10 +6,12 @@ using Elements.Geometry.Interfaces;
 using Newtonsoft.Json;
 using Elements.Analysis;
 using System.Linq;
+using Elements.Geometry.Solids;
+
 
 namespace MJProceduralMass
 {
-      public static class MJProceduralMass
+    public static class MJProceduralMass
     {
         /// <summary>
         /// Generates a procedural massing for a residential/office building.
@@ -24,121 +26,150 @@ namespace MJProceduralMass
             var center = input.SiteBoundary.Centroid();
             var analyze = new Func<Vector3, double>((v) =>
             {
-              return center.DistanceTo(v);
+                return center.DistanceTo(v);
             });
 
             Console.WriteLine("Greetings");
             var envelopes = new List<Envelope>();
-             //trying stuff..
+            //trying stuff..
             var polys = new List<ModelCurve>();
             var elligibleCells = new List<sCell>();
             sGrid grid = null;
-             try{
-            
-            grid = new sGrid(input.SiteBoundary, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze, input.ObstaclePolygons);
-
-            if(input.ObstaclePolygons == null)
-                grid.InitCells(false);
-            else
-                grid.InitCells(true);
-            
-            
-            //init start index
-            elligibleCells = grid.cells.Values.Select(s => s).ToList();
-
-            var totalCells = grid.cells.Count;
-            int startIndex = (int)(elligibleCells.Count * input.StartingLocation);
-
-            if (startIndex >= elligibleCells.Count)
-                startIndex = elligibleCells.Count - 1;
-
-            var selected = elligibleCells[startIndex];
-
-            Console.WriteLine("start index:" + startIndex);
-
-            grid.Run(selected);
-
-
-            var branchCount = grid.treeRects.Count;
-            var increment = 1.0/ branchCount;
-
-            /////JITTERVALS
-            var rangeVals = new List<double>();
-            for (int i = 0; i < branchCount + 1; i++)
-                rangeVals.Add(increment * i);
-
-            var jitteredHeights = Jitter(rangeVals, input.HeightJitter * 0.01);
-            var jitterMin = jitteredHeights.Min();
-            var jitterMax = jitteredHeights.Max();
-
-            var remappedVals = new List<double>();
-            // RhinoApp.WriteLine("remapped vals:");
-            for (int i = 0; i < jitteredHeights.Length; i++)
+            List<sPolygon> smartPolys = new List<sPolygon>();
+            try
             {
-                // RhinoApp.WriteLine("raw jitter: " + (jitteredHeights[i]).ToString());
-                var remapped = mapValue(jitteredHeights[i], jitterMin, jitterMax, input.MinHeight, input.MaxHeight);
-                remappedVals.Add(remapped);
-            }
+                grid = new sGrid(input.SiteBoundary, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze, input.ObstaclePolygons);
 
-            Console.WriteLine("Overall branch count: "+ grid.finalTree.Keys.Count);
+                if (input.ObstaclePolygons == null)
+                    grid.InitCells(false);
+                else
+                    grid.InitCells(true);
+
+
+                //init start index
+                elligibleCells = grid.cells.Values.Select(s => s).ToList();
+
+                var totalCells = grid.cells.Count;
+                int startIndex = (int)(elligibleCells.Count * input.StartingLocation);
+
+                if (startIndex >= elligibleCells.Count)
+                    startIndex = elligibleCells.Count - 1;
+
+                var selected = elligibleCells[startIndex];
+
+                Console.WriteLine("start index:" + startIndex);
+
+                grid.Run(selected);
+
+
+                var branchCount = grid.treeRects.Count;
+                var increment = 1.0 / branchCount;
+
+                /////JITTERVALS
+                var rangeVals = new List<double>();
+                for (int i = 0; i < branchCount + 1; i++)
+                    rangeVals.Add(increment * i);
+
+                var jitteredHeights = Jitter(rangeVals, input.HeightJitter * 0.01);
+                var jitterMin = jitteredHeights.Min();
+                var jitterMax = jitteredHeights.Max();
+
+                var remappedVals = new List<double>();
+                // RhinoApp.WriteLine("remapped vals:");
+                for (int i = 0; i < jitteredHeights.Length; i++)
+                {
+                    // RhinoApp.WriteLine("raw jitter: " + (jitteredHeights[i]).ToString());
+                    var remapped = mapValue(jitteredHeights[i], jitterMin, jitterMax, input.MinHeight, input.MaxHeight);
+                    remappedVals.Add(remapped);
+                }
+
+                Console.WriteLine("Overall branch count: " + grid.finalTree.Keys.Count);
 
                 var keyList = grid.finalTree.Keys.Count;
 
-
-
+                var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
+                
                 for (int k = 0; k < grid.finalTree.Keys.Count; k++)
                 {
-                    var tempPolys = new List<Polygon>();
                     var listOfCells = grid.finalTree.Values.ToArray();
                     var cellCount = listOfCells[k].Count;
                     for (int j = 0; j < cellCount; j++)
                     {
                         Console.WriteLine($"x: {listOfCells[k][j].index.X} y: {listOfCells[k][j].index.Y}");
                         var poly = new Polygon(new List<Vector3>(){
-                 new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Min.Y),
-                 new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Max.Y),
-                  new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Max.Y),
-                  new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Min.Y)});
-                        tempPolys.Add(poly);
+                            new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Min.Y),
+                            new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Max.Y),
+                            new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Max.Y),
+                            new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Min.Y)});
+
+                        var smPoly = new sPolygon(poly, remappedVals[k]);
+                        smartPolys.Add(smPoly);
+
+                        // var profile = new Profile(poly); 
+                        //         var extrude = new Elements.Geometry.Solids.Extrude(profile, remappedVals[k], Vector3.ZAxis, false);
+                        //         var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
+
                     }
-                    var polyUnioned = Polygon.UnionAll(tempPolys, 0.01);
-                    polys.Add(new ModelCurve(polyUnioned[0]));
-
-                    var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
-
-
-                    var profile = new Profile(polyUnioned);
-                    //trying stuff..
-                    var extrude = new Elements.Geometry.Solids.Extrude(profile, remappedVals[k], Vector3.ZAxis, false);
-                    var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
-
-                    envelopes.Add(new Envelope(profile, 0.0, remappedVals[k], Vector3.ZAxis, 0.0, new Transform(), envMatl, geomRep, false, Guid.NewGuid(), ""));
 
                 }
 
+
+            ///height logic
+            var validPolys = smartPolys.Where(c => c.polygon != null).ToList();
+            var distinctHeights = smartPolys.Select(c => c.height).Distinct().OrderBy(d => d);
+            var currBase = 0.0;
+            foreach (var height in distinctHeights)
+            {
+                var clinesBelowHeight = smartPolys.Where(c => c.height <= height);
+                var individualPolygons = new List<Polygon>();
+
+                foreach (var pg in clinesBelowHeight)
+                {
+                    var thickened = pg.polygon;
+
+                    if (thickened.IsClockWise())
+                        thickened = thickened.Reversed();
+
+                    if(validPolys.Contains(pg)){
+                        individualPolygons.Add(thickened);
+                        validPolys.Remove(pg);
+                    }
+                }
+
+                var unionTest = Polygon.UnionAll(individualPolygons);
+                var unionPossible = unionTest!= null && unionTest.Count==1;
+                var union = individualPolygons.Count > 1 && unionPossible? Polygon.UnionAll(individualPolygons) : individualPolygons;
+                foreach (var polygon in union)
+                {
+                    var representation = new Representation(new SolidOperation[] { new Extrude(polygon, height - currBase, Vector3.ZAxis, false) });
+                    var envelope = new Envelope(polygon, currBase, height - currBase, Vector3.ZAxis, 0, new Transform(0, 0, currBase), envMatl, representation, false, Guid.NewGuid(), "");
+
+                    envelopes.Add(envelope);
+                }
+            }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
 
-            var siteCover = string.Format("{0}%", grid.grownTree.Count/(elligibleCells.Count * 1.0));
+            var siteCover = string.Format("{0}%", grid.grownTree.Count / (elligibleCells.Count * 1.0) * 100);
             var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover);
 
             output.Model.AddElements(envelopes);
 
-            //output.Model.AddElements(polys);
+            output.Model.AddElements(polys);
 
             output.Model.AddElement(new ModelCurve(input.SiteBoundary));
 
-             var greenMat = new Material("greenery", new Color(0.329, 1.0, 0.239, 0.6), 0.0f, 0.0f);
+            var greenMat = new Material("greenery", new Color(0.329, 1.0, 0.239, 0.6), 0.0f, 0.0f);
 
-            output.Model.AddElements(input.ObstaclePolygons.Select(s=>new Mass(s, 1, greenMat)));
+            output.Model.AddElements(input.ObstaclePolygons.Select(s => new Mass(s, 1, greenMat)));
 
             return output;
         }
 
-        public static int [] Jitter(List<double> initList, double jitterFactor)
+        public static int[] Jitter(List<double> initList, double jitterFactor)
         {
             int[] array = new int[initList.Count];
 
@@ -183,5 +214,18 @@ namespace MJProceduralMass
 
     }
 
-     
+    public class sPolygon 
+    {
+        public Polygon polygon; 
+        public double height;
+
+
+        public sPolygon(Polygon polygon, double height)
+        {
+            this.polygon = polygon;
+            this.height = height;
+        }
+    }
+
+
 }
