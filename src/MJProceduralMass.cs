@@ -29,9 +29,7 @@ namespace MJProceduralMass
                 return center.DistanceTo(v);
             });
 
-            Console.WriteLine("Greetings");
             var envelopes = new List<Envelope>();
-            //trying stuff..
             var polys = new List<ModelCurve>();
             var elligibleCells = new List<sCell>();
             sGrid grid = null;
@@ -44,7 +42,6 @@ namespace MJProceduralMass
                     grid.InitCells(false);
                 else
                     grid.InitCells(true);
-
 
                 //init start index
                 elligibleCells = grid.cells.Values.Select(s => s).ToList();
@@ -59,13 +56,16 @@ namespace MJProceduralMass
 
                 Console.WriteLine("start index:" + startIndex);
 
+                ///Main Run
                 grid.Run(selected);
 
 
+                /// <summary>
+                /// jittered heights logic
+                /// </summary>
                 var branchCount = grid.treeRects.Count;
                 var increment = 1.0 / branchCount;
 
-                /////JITTERVALS
                 var rangeVals = new List<double>();
                 for (int i = 0; i < branchCount + 1; i++)
                     rangeVals.Add(increment * i);
@@ -75,10 +75,8 @@ namespace MJProceduralMass
                 var jitterMax = jitteredHeights.Max();
 
                 var remappedVals = new List<double>();
-                // RhinoApp.WriteLine("remapped vals:");
                 for (int i = 0; i < jitteredHeights.Length; i++)
                 {
-                    // RhinoApp.WriteLine("raw jitter: " + (jitteredHeights[i]).ToString());
                     var remapped = mapValue(jitteredHeights[i], jitterMin, jitterMax, input.MinHeight, input.MaxHeight);
                     remappedVals.Add(remapped);
                 }
@@ -104,17 +102,12 @@ namespace MJProceduralMass
 
                         var smPoly = new sPolygon(poly, remappedVals[k]);
                         smartPolys.Add(smPoly);
-
-                        // var profile = new Profile(poly); 
-                        //         var extrude = new Elements.Geometry.Solids.Extrude(profile, remappedVals[k], Vector3.ZAxis, false);
-                        //         var geomRep = new Representation(new List<Elements.Geometry.Solids.SolidOperation>() { extrude });
-
                     }
 
                 }
 
 
-            ///height logic
+            ///height/ grouping logic
             var validPolys = smartPolys.Where(c => c.polygon != null).ToList();
             var distinctHeights = smartPolys.Select(c => c.height).Distinct().OrderBy(d => d);
             var currBase = 0.0;
@@ -153,15 +146,16 @@ namespace MJProceduralMass
                 Console.WriteLine(e.ToString());
             }
 
+            //site percentage cover.
             var siteCover = string.Format("{0}%", grid.grownTree.Count / (elligibleCells.Count * 1.0) * 100);
+
             var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover);
-
+            //envelopes
             output.Model.AddElements(envelopes);
-
-            output.Model.AddElements(polys);
-
+            //site boundary curve
             output.Model.AddElement(new ModelCurve(input.SiteBoundary));
 
+            //obstacle outputs
             var greenMat = new Material("greenery", new Color(0.329, 1.0, 0.239, 0.6), 0.0f, 0.0f);
 
             output.Model.AddElements(input.ObstaclePolygons.Select(s => new Mass(s, 1, greenMat)));
