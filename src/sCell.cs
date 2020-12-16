@@ -34,9 +34,9 @@ namespace MJProceduralMass
                 this.polyCrv = new Polygon(new List<Vector3>()
                 {
                      new Vector3(rect.Min.X, rect.Min.Y),
-                 new Vector3(rect.Min.X, rect.Max.Y),
-                  new Vector3(rect.Max.X, rect.Max.Y),
-                  new Vector3(rect.Max.X, rect.Min.Y)
+                     new Vector3(rect.Min.X, rect.Max.Y),
+                     new Vector3(rect.Max.X, rect.Max.Y),
+                     new Vector3(rect.Max.X, rect.Min.Y)
                   });
                 isActive = false;
             }

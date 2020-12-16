@@ -79,6 +79,11 @@ namespace MJProceduralMass
         }
 
 #region initiating cells
+
+        /// <summary>
+        /// Initializes a grid2d given a starting index and a site boundary.
+        /// </summary>
+        /// <param name="obstaclesExist"></param>
         public void InitCells(bool obstaclesExist)
         {
           var bounds = new BBox3(new[] { this.Perimeter });
@@ -175,7 +180,11 @@ namespace MJProceduralMass
 
         #endregion
 
-        /////////Main 'Run' function
+        /// <summary>
+        /// Main 'grow' function given a dictionary, a starting point.
+        /// </summary>
+        /// <param name="startCell"></param>
+        /// <returns></returns>
         public bool Run(sCell startCell)
         {
             bool done = false;
@@ -255,6 +264,12 @@ namespace MJProceduralMass
 
 #region Support Functions
 
+        /// <summary>
+        /// Checks to see if a given Vector3 is inside a group of curves
+        /// </summary>
+        /// <param name="samplePt"></param>
+        /// <param name="obstacleCrvs"></param>
+        /// <returns></returns>
         private bool InsideCrvsGroup(Vector3 samplePt, IList<Polygon> obstacleCrvs)
         {
             bool invalid = false;
@@ -264,7 +279,14 @@ namespace MJProceduralMass
             return invalid;
         }
 
-     //should be run using the parent dictionary(cells)
+        /// <summary>
+        /// This logic looks ahead in the dictionary to locations which would be allowed or prohibited.
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <param name="dict"></param>
+        /// <param name="listCells"></param>
+        /// <param name="debugger"></param>
+        /// <returns></returns>
         public List<sCell> CheckPlacementLocations(sCell cell, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> listCells, out string debugger)
         {
             var neighbors = new List<sCell>();
@@ -341,6 +363,10 @@ namespace MJProceduralMass
 
         }
 
+        /// <summary>
+        /// Processes branches and turns them into clusters.
+        /// </summary>
+        /// <param name="dict"></param>
          public void ProcessGroups(SortedDictionary<Vector2dInt, sCell> dict)
         {
             treeRects = new Dictionary<int, List<sCell>>();
@@ -408,7 +434,6 @@ namespace MJProceduralMass
                     }
                     else
                         treeRects.Add(count, internalList);
-                   // treeRects.Add(internalList);
                     tempList.Remove(current);
                     newDict.Remove(current.index);
                 }
@@ -417,7 +442,6 @@ namespace MJProceduralMass
             }
 
             finalTree = new Dictionary<int, List<sCell>>();
-
 
             var valArray = treeRects.Values.ToArray();
             for (int i = 0; i < treeRects.Keys.Count; i++)
@@ -461,6 +485,12 @@ namespace MJProceduralMass
             }
         }
 
+        /// <summary>
+        /// Finds nearest grouping for mass clustering.
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="tree"></param>
+        /// <returns></returns>
           public int FindNearestTreeIndex(BBox3 rect, Dictionary <int, List<sCell>> tree)
         {
             int val = -1;
@@ -484,13 +514,16 @@ namespace MJProceduralMass
 
             var closest = pts.OrderBy(s => s.dist).Select(i => i.index).ToList();
 
-            // if(closest > -1)
             val = closest[0];
-
             return val;
- 
         }
 
+        /// <summary>
+        /// Finds ortho and active neighbors for deciding branching growth.
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <param name="dict"></param>
+        /// <returns></returns>
         public List<sCell> GetOrthoActiveNeighbors(sCell cell, SortedDictionary<Vector2dInt, sCell> dict)
         {
             var neighbors = new List<sCell>();
