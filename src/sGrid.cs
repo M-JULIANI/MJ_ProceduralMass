@@ -18,7 +18,6 @@ namespace MJProceduralMass
        public Dictionary<int, List<sCell>> finalTree;
        private double targetNumCells;
        public IList<Polygon> obstacles;
-        private Func<Vector3, double> _analyze;
                 /// <summary>
         /// The length of the cells in the u direction.
         /// </summary>
@@ -33,11 +32,6 @@ namespace MJProceduralMass
         /// The perimeter of the analysis mesh.
         /// </summary>
         public Polygon Perimeter { get; set; }
-
-        /// <summary>
-        /// The color scale used to represent this analysis mesh.
-        /// </summary>
-        public ColorScale ColorScale { get; set; }
 
         /// <summary>
         /// Construct an analysis mesh.
@@ -55,8 +49,6 @@ namespace MJProceduralMass
                             double startingParam,
                             double minHeight,
                             double maxHeight,
-                            ColorScale colorScale,
-                            Func<Vector3, double> analyze,
                             IList<Polygon> obstacles = null,
                             Guid id = default(Guid),
                             string name = null) : base(new Transform(),
@@ -73,8 +65,6 @@ namespace MJProceduralMass
             this.startingParam = startingParam;
             this.minHeight = minHeight;
             this.maxHeight = maxHeight;
-            this.ColorScale = colorScale;
-            this._analyze = analyze;
             this.Material = new Material($"Analysis_{Guid.NewGuid().ToString()}", Colors.White, 0, 0, null, true, true, Guid.NewGuid());
         }
 

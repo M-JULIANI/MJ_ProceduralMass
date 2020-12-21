@@ -21,13 +21,10 @@ namespace MJProceduralMass
         /// <returns>A MJProceduralMassOutputs instance containing computed results and the model with any new elements.</returns>
         public static MJProceduralMassOutputs Execute(Dictionary<string, Model> inputModels, MJProceduralMassInputs input)
         {
-
-            var colorScale = new ColorScale(new List<Color>() { Colors.Cyan, Colors.Purple, Colors.Orange }, 10);
-            var center = input.SiteBoundary.Centroid();
-            var analyze = new Func<Vector3, double>((v) =>
-            {
-                return center.DistanceTo(v);
-            });
+            var siteModel = inputModels["Site"];
+            var siteElement = siteModel.AllElementsOfType<Site>().First();
+            var sitePerimeter = siteElement.Perimeter;
+           // var offsetPerimeter = sitePerimeter.Offset(-siteModel.)
 
             var envelopes = new List<Envelope>();
             var polys = new List<ModelCurve>();
@@ -36,7 +33,7 @@ namespace MJProceduralMass
             List<sPolygon> smartPolys = new List<sPolygon>();
             try
             {
-                grid = new sGrid(input.SiteBoundary, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, colorScale, analyze, input.ObstaclePolygons);
+                grid = new sGrid(sitePerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
 
                 if (input.ObstaclePolygons == null)
                     grid.InitCells(false);
@@ -153,12 +150,12 @@ namespace MJProceduralMass
             //envelopes
             output.Model.AddElements(envelopes);
             //site boundary curve
-            output.Model.AddElement(new ModelCurve(input.SiteBoundary));
+          //  output.Model.AddElement(new ModelCurve(sitePerimeter));
 
             //obstacle outputs
-            var greenMat = new Material("greenery", new Color(0.329, 1.0, 0.239, 0.6), 0.0f, 0.0f);
+            var grayMat = new Material("greenery", new Color(0.44, 0.44, 0.44, 0.6), 0.0f, 0.0f);
 
-            output.Model.AddElements(input.ObstaclePolygons.Select(s => new Mass(s, 1, greenMat)));
+            output.Model.AddElements(input.ObstaclePolygons.Select(s => new Mass(s, 2, grayMat)));
 
             return output;
         }
