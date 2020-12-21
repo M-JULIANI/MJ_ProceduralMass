@@ -24,7 +24,7 @@ namespace MJProceduralMass
             var siteModel = inputModels["Site"];
             var siteElement = siteModel.AllElementsOfType<Site>().First();
             var sitePerimeter = siteElement.Perimeter;
-           // var offsetPerimeter = sitePerimeter.Offset(-siteModel.)
+            var offsetPerimeter = sitePerimeter.Offset(-input.SiteSetback).OrderByDescending<Polygon, double>(s=>s.Area()).First();
 
             var envelopes = new List<Envelope>();
             var polys = new List<ModelCurve>();
@@ -33,7 +33,7 @@ namespace MJProceduralMass
             List<sPolygon> smartPolys = new List<sPolygon>();
             try
             {
-                grid = new sGrid(sitePerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
+                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
 
                 if (input.ObstaclePolygons == null)
                     grid.InitCells(false);
@@ -82,7 +82,7 @@ namespace MJProceduralMass
 
                 var keyList = grid.finalTree.Keys.Count;
 
-                var envMatl = new Material("envelope", new Color(0.3, 0.7, 0.7, 0.6), 0.0f, 0.0f);
+                var envMatl = new Material("envelope", new Color(0.27, 0.73, 0.73, 0.6), 0.0f, 0.0f);
                 
                 for (int k = 0; k < grid.finalTree.Keys.Count; k++)
                 {
@@ -150,7 +150,7 @@ namespace MJProceduralMass
             //envelopes
             output.Model.AddElements(envelopes);
             //site boundary curve
-          //  output.Model.AddElement(new ModelCurve(sitePerimeter));
+            output.Model.AddElement(new ModelCurve(offsetPerimeter));
 
             //obstacle outputs
             var grayMat = new Material("greenery", new Color(0.44, 0.44, 0.44, 0.6), 0.0f, 0.0f);

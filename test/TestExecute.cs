@@ -17,9 +17,8 @@ public class TestExecute
 
             var boundary = new Polygon(new List<Vector3>{new Vector3(-20, -30), new Vector3(50,-40), new Vector3(30,40), new Vector3(-50,60)});
 
+            var input = new MJProceduralMassInputs(20, 12, 0.5, 45, 20, 80, null, 10, "", "", null, "", "", "");
 
-            var input = new MJProceduralMassInputs(20,
-            15, boundary, 0.5, 20, 4.5, 45, null, "", "", null, "", "", "");
 
             var output = MJProceduralMass.Execute(new Dictionary<string, Model>{}, input);
 

@@ -29,23 +29,23 @@ namespace MJProceduralMass
     {
         [Newtonsoft.Json.JsonConstructor]
         
-        public MJProceduralMassInputs(double @targetCellCount, double @minHeight, Polygon @siteBoundary, double @startingLocation, double @heightJitter, double @cellSize, double @maxHeight, IList<Polygon> @obstaclePolygons, string bucketName, string uploadsBucket, Dictionary<string, string> modelInputKeys, string gltfKey, string elementsKey, string ifcKey):
+        public MJProceduralMassInputs(double @targetCellCount, double @minHeight, double @startingLocation, double @heightJitter, double @cellSize, double @maxHeight, IList<Polygon> @obstaclePolygons, double @siteSetback, string bucketName, string uploadsBucket, Dictionary<string, string> modelInputKeys, string gltfKey, string elementsKey, string ifcKey):
         base(bucketName, uploadsBucket, modelInputKeys, gltfKey, elementsKey, ifcKey)
         {
             var validator = Validator.Instance.GetFirstValidatorForType<MJProceduralMassInputs>();
             if(validator != null)
             {
-                validator.PreConstruct(new object[]{ @targetCellCount, @minHeight, @siteBoundary, @startingLocation, @heightJitter, @cellSize, @maxHeight, @obstaclePolygons});
+                validator.PreConstruct(new object[]{ @targetCellCount, @minHeight, @startingLocation, @heightJitter, @cellSize, @maxHeight, @obstaclePolygons, @siteSetback});
             }
         
             this.TargetCellCount = @targetCellCount;
             this.MinHeight = @minHeight;
-            this.SiteBoundary = @siteBoundary;
             this.StartingLocation = @startingLocation;
             this.HeightJitter = @heightJitter;
             this.CellSize = @cellSize;
             this.MaxHeight = @maxHeight;
             this.ObstaclePolygons = @obstaclePolygons;
+            this.SiteSetback = @siteSetback;
         
             if(validator != null)
             {
@@ -62,10 +62,6 @@ namespace MJProceduralMass
         [Newtonsoft.Json.JsonProperty("MinHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(20D, 50D)]
         public double MinHeight { get; set; } = 34D;
-    
-        /// <summary>A closed planar polygon.</summary>
-        [Newtonsoft.Json.JsonProperty("SiteBoundary", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public Polygon SiteBoundary { get; set; }
     
         /// <summary>Starting cell parameter (from 0.0-1.0)</summary>
         [Newtonsoft.Json.JsonProperty("StartingLocation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -88,8 +84,14 @@ namespace MJProceduralMass
         public double MaxHeight { get; set; } = 82D;
     
         /// <summary>List of polygons describing no-go zones.</summary>
-        [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public IList<Polygon> ObstaclePolygons { get; set; }
+        [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required]
+        public IList<Polygon> ObstaclePolygons { get; set; } = new List<Polygon>();
+    
+        /// <summary>Setback of the site</summary>
+        [Newtonsoft.Json.JsonProperty("SiteSetback", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [System.ComponentModel.DataAnnotations.Range(0D, 30D)]
+        public double SiteSetback { get; set; } = 10D;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
