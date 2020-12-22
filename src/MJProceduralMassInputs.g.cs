@@ -91,7 +91,7 @@ namespace MJProceduralMass
         /// <summary>Setback of the site</summary>
         [Newtonsoft.Json.JsonProperty("SiteSetback", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(0D, 30D)]
-        public double SiteSetback { get; set; } = 10D;
+        public double SiteSetback { get; set; } = 5D;
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     

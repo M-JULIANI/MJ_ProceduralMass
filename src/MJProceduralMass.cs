@@ -31,6 +31,7 @@ namespace MJProceduralMass
             var elligibleCells = new List<sCell>();
             sGrid grid = null;
             List<sPolygon> smartPolys = new List<sPolygon>();
+            List<ModelCurve> sketches = new List<ModelCurve>();
             try
             {
                 grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
@@ -105,12 +106,11 @@ namespace MJProceduralMass
 
 
             ///height/ grouping logic
-            var validPolys = smartPolys.Where(c => c.polygon != null).ToList();
             var distinctHeights = smartPolys.Select(c => c.height).Distinct().OrderBy(d => d);
             var currBase = 0.0;
             foreach (var height in distinctHeights)
             {
-                var clinesBelowHeight = smartPolys.Where(c => c.height <= height);
+                var clinesBelowHeight = smartPolys.Where(c => c.height >= height);
                 var individualPolygons = new List<Polygon>();
 
                 foreach (var pg in clinesBelowHeight)
@@ -120,22 +120,22 @@ namespace MJProceduralMass
                     if (thickened.IsClockWise())
                         thickened = thickened.Reversed();
 
-                    if(validPolys.Contains(pg)){
-                        individualPolygons.Add(thickened);
-                        validPolys.Remove(pg);
-                    }
+                    individualPolygons.Add(thickened);
                 }
 
-                var unionTest = Polygon.UnionAll(individualPolygons);
-                var unionPossible = unionTest!= null && unionTest.Count==1;
-                var union = individualPolygons.Count > 1 && unionPossible? Polygon.UnionAll(individualPolygons) : individualPolygons;
+                var union = individualPolygons.Count > 1 ? Polygon.UnionAll(individualPolygons) : individualPolygons;
+
+
                 foreach (var polygon in union)
                 {
                     var representation = new Representation(new SolidOperation[] { new Extrude(polygon, height - currBase, Vector3.ZAxis, false) });
                     var envelope = new Envelope(polygon, currBase, height - currBase, Vector3.ZAxis, 0, new Transform(0, 0, currBase), envMatl, representation, false, Guid.NewGuid(), "");
 
                     envelopes.Add(envelope);
+                    
                 }
+                currBase = height;
+                
             }
             }
             catch (Exception e)
@@ -147,6 +147,9 @@ namespace MJProceduralMass
             var siteCover = string.Format("{0}%", grid.grownTree.Count / (elligibleCells.Count * 1.0) * 100);
 
             var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover);
+
+            output.Model.AddElements(sketches);
+
             //envelopes
             output.Model.AddElements(envelopes);
             //site boundary curve
