@@ -135,7 +135,6 @@ namespace MJProceduralMass
                     
                 }
                 currBase = height;
-                
             }
             }
             catch (Exception e)
