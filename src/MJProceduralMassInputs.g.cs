@@ -70,8 +70,8 @@ namespace MJProceduralMass
     
         /// <summary>Height randomness</summary>
         [Newtonsoft.Json.JsonProperty("HeightJitter", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(0D, 100D)]
-        public double HeightJitter { get; set; } = 50D;
+        [System.ComponentModel.DataAnnotations.Range(0D, 1D)]
+        public double HeightJitter { get; set; } = 0.5D;
     
         /// <summary>Range for size of cell</summary>
         [Newtonsoft.Json.JsonProperty("CellSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]

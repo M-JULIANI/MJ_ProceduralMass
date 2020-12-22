@@ -49,7 +49,7 @@ namespace MJProceduralMass
                             double startingParam,
                             double minHeight,
                             double maxHeight,
-                            IList<Polygon> obstacles = null,
+                            IList<Polygon> obstacles,
                             Guid id = default(Guid),
                             string name = null) : base(new Transform(),
                                                        BuiltInMaterials.Default,
@@ -61,6 +61,30 @@ namespace MJProceduralMass
             this.Perimeter = perimeter;
             this.cellSize = cellSize;
             this.obstacles = obstacles;
+            this.targetNumCells = targetNumCells;
+            this.startingParam = startingParam;
+            this.minHeight = minHeight;
+            this.maxHeight = maxHeight;
+            this.Material = new Material($"Analysis_{Guid.NewGuid().ToString()}", Colors.White, 0, 0, null, true, true, Guid.NewGuid());
+        }
+
+           public sGrid(Polygon perimeter,
+                            double cellSize,
+                            double targetNumCells,
+                            double startingParam,
+                            double minHeight,
+                            double maxHeight,
+                            Guid id = default(Guid),
+                            string name = null) : base(new Transform(),
+                                                       BuiltInMaterials.Default,
+                                                       null,
+                                                       false,
+                                                       id == default(Guid) ? Guid.NewGuid() : id,
+                                                       name)
+        {
+            this.Perimeter = perimeter;
+            this.cellSize = cellSize;
+            //this.obstacles = null;
             this.targetNumCells = targetNumCells;
             this.startingParam = startingParam;
             this.minHeight = minHeight;

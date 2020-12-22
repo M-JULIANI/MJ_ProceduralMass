@@ -34,12 +34,11 @@ namespace MJProceduralMass
             List<ModelCurve> sketches = new List<ModelCurve>();
             try
             {
-                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
-
-                if (input.ObstaclePolygons == null)
-                    grid.InitCells(false);
-                else
+                if (input.ObstaclePolygons != null)
+                {
+                    grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
                     grid.InitCells(true);
+                }
 
                 //init start index
                 elligibleCells = grid.cells.Values.Select(s => s).ToList();
@@ -68,7 +67,7 @@ namespace MJProceduralMass
                 for (int i = 0; i < branchCount + 1; i++)
                     rangeVals.Add(increment * i);
 
-                var jitteredHeights = Jitter(rangeVals, input.HeightJitter * 0.01);
+                var jitteredHeights = Jitter(rangeVals, input.HeightJitter);
                 var jitterMin = jitteredHeights.Min();
                 var jitterMax = jitteredHeights.Max();
 
