@@ -144,7 +144,7 @@ namespace MJProceduralMass
             //site percentage cover.
             var siteCover = string.Format("{0}%", grid.grownTree.Count / (elligibleCells.Count * 1.0) * 100);
 
-            var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover);
+            var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover, grid.cellSize);
 
             output.Model.AddElements(sketches);
 

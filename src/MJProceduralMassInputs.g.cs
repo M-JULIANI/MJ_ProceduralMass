@@ -84,9 +84,8 @@ namespace MJProceduralMass
         public double MaxHeight { get; set; } = 82D;
     
         /// <summary>List of polygons describing no-go zones.</summary>
-        [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
-        public IList<Polygon> ObstaclePolygons { get; set; } = new List<Polygon>();
+        [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public IList<Polygon> ObstaclePolygons { get; set; }
     
         /// <summary>Setback of the site</summary>
         [Newtonsoft.Json.JsonProperty("SiteSetback", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
