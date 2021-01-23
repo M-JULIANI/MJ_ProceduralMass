@@ -60,8 +60,8 @@ namespace MJProceduralMass
     
         /// <summary>Min Height for procedural mass.</summary>
         [Newtonsoft.Json.JsonProperty("MinHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(20D, 50D)]
-        public double MinHeight { get; set; } = 34D;
+        [System.ComponentModel.DataAnnotations.Range(15D, 50D)]
+        public double MinHeight { get; set; } = 15D;
     
         /// <summary>Starting cell parameter (from 0.0-1.0)</summary>
         [Newtonsoft.Json.JsonProperty("StartingLocation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -75,13 +75,13 @@ namespace MJProceduralMass
     
         /// <summary>Range for size of cell</summary>
         [Newtonsoft.Json.JsonProperty("CellSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(8D, 100D)]
-        public double CellSize { get; set; } = 30D;
+        [System.ComponentModel.DataAnnotations.Range(6D, 25D)]
+        public double CellSize { get; set; } = 8D;
     
         /// <summary>Max Height to procedural mass.</summary>
         [Newtonsoft.Json.JsonProperty("MaxHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(0D, 150D)]
-        public double MaxHeight { get; set; } = 82D;
+        [System.ComponentModel.DataAnnotations.Range(50D, 150D)]
+        public double MaxHeight { get; set; } = 80D;
     
         /// <summary>List of polygons describing no-go zones.</summary>
         [Newtonsoft.Json.JsonProperty("ObstaclePolygons", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
