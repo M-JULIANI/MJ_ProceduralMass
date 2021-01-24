@@ -29,9 +29,9 @@ namespace MJProceduralMass
 		public string SiteCover {get;}
 
 		/// <summary>
-		/// Size of cell
+		/// Length of cell.
 		/// </summary>
-		[JsonProperty("CellSize")]
+		[JsonProperty("Cell Size")]
 		public double CellSize {get;}
 
 
