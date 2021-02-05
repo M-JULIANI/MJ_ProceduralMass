@@ -35,9 +35,22 @@ namespace MJProceduralMass
             try
             {
 
-                bool obstaclesExist = input.ObstaclePolygons !=null? true: false;
-                    grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
-                    grid.InitCells(obstaclesExist);
+                
+                var obstacles = input.ObstaclePolygons!= null? input.ObstaclePolygons: null;
+
+                bool obstaclesExist = obstacles !=null? true: false;
+
+                if(obstaclesExist)
+                {
+                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, obstacles);
+                }
+
+                else
+                {
+                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight);
+                                
+                }
+                grid.InitCells(obstaclesExist);
 
 
                 //init start index

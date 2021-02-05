@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MJProceduralMass
 {
-     public class sGrid : GeometricElement
+     public class sGrid
       {
       private List<(BBox3 cell, double value)> _results = new List<(BBox3 cell, double value)>();
 
@@ -49,14 +49,7 @@ namespace MJProceduralMass
                             double startingParam,
                             double minHeight,
                             double maxHeight,
-                            IList<Polygon> obstacles,
-                            Guid id = default(Guid),
-                            string name = null) : base(new Transform(),
-                                                       BuiltInMaterials.Default,
-                                                       null,
-                                                       false,
-                                                       id == default(Guid) ? Guid.NewGuid() : id,
-                                                       name)
+                            IList<Polygon> obstacles)
         {
             this.Perimeter = perimeter;
             this.cellSize = cellSize;
@@ -65,7 +58,7 @@ namespace MJProceduralMass
             this.startingParam = startingParam;
             this.minHeight = minHeight;
             this.maxHeight = maxHeight;
-            this.Material = new Material($"Analysis_{Guid.NewGuid().ToString()}", Colors.White, 0, 0, null, true, true, Guid.NewGuid());
+            this.obstacles = obstacles;
         }
 
            public sGrid(Polygon perimeter,
@@ -73,23 +66,15 @@ namespace MJProceduralMass
                             double targetNumCells,
                             double startingParam,
                             double minHeight,
-                            double maxHeight,
-                            Guid id = default(Guid),
-                            string name = null) : base(new Transform(),
-                                                       BuiltInMaterials.Default,
-                                                       null,
-                                                       false,
-                                                       id == default(Guid) ? Guid.NewGuid() : id,
-                                                       name)
+                            double maxHeight)
         {
             this.Perimeter = perimeter;
             this.cellSize = cellSize;
-            //this.obstacles = null;
+            this.obstacles = null;
             this.targetNumCells = targetNumCells;
             this.startingParam = startingParam;
             this.minHeight = minHeight;
             this.maxHeight = maxHeight;
-            this.Material = new Material($"Analysis_{Guid.NewGuid().ToString()}", Colors.White, 0, 0, null, true, true, Guid.NewGuid());
         }
 
 #region initiating cells
