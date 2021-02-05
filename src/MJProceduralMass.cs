@@ -84,6 +84,7 @@ namespace MJProceduralMass
 
                 var envMatl = new Material("envelope", new Color(0.27, 0.73, 0.73, 0.6), 0.0f, 0.0f);
                 
+                int globalIndex = 0;
                 for (int k = 0; k < grid.finalTree.Keys.Count; k++)
                 {
                     var listOfCells = grid.finalTree.Values.ToArray();
@@ -91,16 +92,23 @@ namespace MJProceduralMass
                     for (int j = 0; j < cellCount; j++)
                     {
                         Console.WriteLine($"x: {listOfCells[k][j].index.X} y: {listOfCells[k][j].index.Y}");
+                        sPolygon smPoly;
+                        if(grid.GetOrthoActiveNeighbors(listOfCells[k][j], grid.cells).ToList().Count>0)
+                        {
                         var poly = new Polygon(new List<Vector3>(){
                             new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Min.Y),
                             new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Max.Y),
                             new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Max.Y),
                             new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Min.Y)});
 
-                        var smPoly = new sPolygon(poly, remappedVals[k]);
-                        smartPolys.Add(smPoly);
-                    }
+                        smPoly = new sPolygon(poly, remappedVals[k]);
+                        smPoly.index = globalIndex;
 
+                        smartPolys.Add(smPoly); 
+                        sketches.Add(new ModelCurve(smPoly.polygon));
+                        globalIndex++;
+                        }  
+                    }
                 }
 
 
@@ -123,7 +131,6 @@ namespace MJProceduralMass
                 }
 
                 var union = individualPolygons.Count > 1 ? Polygon.UnionAll(individualPolygons) : individualPolygons;
-
 
                 foreach (var polygon in union)
                 {
@@ -210,6 +217,7 @@ namespace MJProceduralMass
     {
         public Polygon polygon; 
         public double height;
+        public int index {get; set;}
 
 
         public sPolygon(Polygon polygon, double height)

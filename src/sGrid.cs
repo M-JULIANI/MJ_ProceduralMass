@@ -219,7 +219,7 @@ namespace MJProceduralMass
                 sCell validCell;
                 if (ReturnOne(localTreeList, cells, grownTree, out validCell)){
                     currentCell = validCell;
-                    Console.WriteLine($"scVALID: x: {currentCell.index.X}, y:{currentCell.index.Y}");
+                    // Console.WriteLine($"current: x: {currentCell.index.X}, y:{currentCell.index.Y}, valid:{validCell.index.X}, y:{validCell.index.Y} ");
                 }
                 else
                     goto ProcessDict;
@@ -253,13 +253,11 @@ namespace MJProceduralMass
                 var keyList = cells.Keys.ToList();
 
                 var tempDict = new SortedDictionary<Vector2dInt, sCell>();
-                int included = 0;
                 for (int i = 0; i < valList.Count; i++)
                 {
                     if (grownTree.Contains(valList[i]))
                     {
                         tempDict.Add(keyList[i], valList[i]);
-                        included++;
                     }
                     else
                     {
@@ -397,25 +395,24 @@ namespace MJProceduralMass
             sCell current = newDict.Values.Where(s => s.isActive).ToList()[0];
 
             int count = 0;
-
-            
+     
             while (tempList.Count > 0)
             {
                 current = tempList[0];
                 var neighbors = GetOrthoActiveNeighbors(current, newDict);
-                var internalList = new List<sCell>();
+                //var internalList = current;
                 
                 if (neighbors.Count > 0)
                 {
-                    internalList.Add(current);
+                    //internalList.Add(current);
                     List<sCell> existingList;
                     if (treeRects.TryGetValue(count, out existingList))
                     {
-                        existingList.AddRange(internalList);
+                        existingList.Add(current);
                         treeRects[count] = existingList;
                     }
                     else
-                        treeRects.Add(count, internalList);
+                        treeRects.Add(count, new List<sCell>(){current});
 
                     
                     tempList.Remove(current);
@@ -438,16 +435,17 @@ namespace MJProceduralMass
                 }
                 else
                 {
-                    internalList.Add(current);
+                    //internalList.Add(current);
 
                     List<sCell> existingList;
                     if(treeRects.TryGetValue(count, out existingList))
                     {
-                        existingList.AddRange(internalList);
+                        existingList.Add(current);
                         treeRects[count] = existingList;
                     }
                     else
-                        treeRects.Add(count, internalList);
+                        treeRects.Add(count, new List<sCell>(){current});
+
                     tempList.Remove(current);
                     newDict.Remove(current.index);
                 }
@@ -464,8 +462,8 @@ namespace MJProceduralMass
                 {
                     var index = FindNearestTreeIndex(valArray[i][0].rect, treeRects);
 
-                    if(index==-1)
-                        index = 0;
+                     if(index==-1)
+                         continue;
 
                     List<sCell> existingList;
                     if (finalTree.TryGetValue(index, out existingList))
@@ -517,7 +515,7 @@ namespace MJProceduralMass
                 for(int k = 0; k< kp.Value.Count; k++)
                 {
                     var dist = rect.Center().DistanceTo(kp.Value[k].rect.Center());
-                    if (dist < 0.1)
+                    if (dist < 0.01)
                         continue;
 
                     pts.Add(new PointSorter(kp.Value[k].rect, dist, count));
