@@ -34,11 +34,11 @@ namespace MJProceduralMass
             List<ModelCurve> sketches = new List<ModelCurve>();
             try
             {
-                if (input.ObstaclePolygons != null)
-                {
+
+                bool obstaclesExist = input.ObstaclePolygons !=null? true: false;
                     grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
-                    grid.InitCells(true);
-                }
+                    grid.InitCells(obstaclesExist);
+
 
                 //init start index
                 elligibleCells = grid.cells.Values.Select(s => s).ToList();
