@@ -11,6 +11,7 @@ namespace MJProceduralMass
     {
             public Vector3 location;
             public Vector2dInt index;
+            public int placementOrder {get; set;}
             public double _resolution;
             public BBox3 rect;
             public Polygon polyCrv;

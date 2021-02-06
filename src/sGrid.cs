@@ -195,16 +195,21 @@ namespace MJProceduralMass
             localTreeList.Add(startCell);
 
             sCell currentCell;
-
+            bool firstReturn = true;
             while (localTreeList.Count > 0)
             {
+                
                 if (count >= targetNumCells)
                     goto ProcessDict;
+            
+                firstReturn = count==0? true: false;
 
                 sCell validCell;
-                if (ReturnOne(localTreeList, cells, grownTree, out validCell)){
+                if (ReturnOne(localTreeList, cells, grownTree, out validCell, firstReturn)){
+                    Console.WriteLine($"location: x_{validCell.index.X}, y_{validCell.index.Y}");
                     currentCell = validCell;
                     // Console.WriteLine($"current: x: {currentCell.index.X}, y:{currentCell.index.Y}, valid:{validCell.index.X}, y:{validCell.index.Y} ");
+                    currentCell.placementOrder = count;
                 }
                 else
                     goto ProcessDict;
@@ -218,9 +223,9 @@ namespace MJProceduralMass
                 sCell actualCell;
                 if (validNeighborCells.Count > 0)
                 {
-
-                    localTreeList.AddRange(validNeighborCells);
                     localTreeList.Remove(currentCell);
+                    localTreeList.AddRange(validNeighborCells);
+                    
 
                     foreach (var vn in validNeighborCells)
                     {
@@ -316,6 +321,8 @@ namespace MJProceduralMass
                             Vector2dInt[] l_neighbors = new Vector2dInt[2];
                             int clearanceCounter = 0;
 
+                            if(Math.Abs(cell.index.X - voxel.index.X)< 2){
+
                             if (xDelta)
                             {
                                 l_neighbors[0] = new Vector2dInt(x, y - 1);
@@ -331,8 +338,9 @@ namespace MJProceduralMass
                                 if (dict.TryGetValue(l_neighbors[ln], out localNeigh) && localNeigh.isActive == true)
                                     clearanceCounter++;
 
-                            if (clearanceCounter < 1)
+                            if (clearanceCounter <1)
                                 neighbors.Add(voxel);
+                            }
                         }
                     }
                 }
@@ -342,22 +350,54 @@ namespace MJProceduralMass
 
         }
 
-         public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell)
+         public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell, bool firstReturn)
         {
             bool canDo = false;
             outputCell = new sCell();
             for (int i = 0; i < listCells.Count; i++)
             {
                 string dis = "";
-                if (CheckPlacementLocations(listCells[i], dict, cellsCheckAgainst, out dis).Count > 0)
+                var placementLocs = CheckPlacementLocations(listCells[i], dict, cellsCheckAgainst, out dis);
+
+                if (placementLocs.Count > 0)
                 {
+                   // if(firstReturn)
+                    {
                     outputCell = listCells[i];
                     canDo = true;
                     return canDo;
+                    }
+
+                    // else
+                    // {
+                    // var closestDist = DistanceToClosestCell(dict.Values.Where(s=>s.isActive==true).Select(s=>s).ToList(), listCells[i]);
+                    // Console.WriteLine("closestDist: " + closestDist);
+                    // if(closestDist == 1)
+                    // {
+                    // outputCell = listCells[i];
+                    // canDo = true;
+                    // return canDo;
+                    // }
+                    // }
                 }
             }
             return canDo;
 
+        }
+
+        public double DistanceToClosestCell(List<sCell> listCells, sCell current)
+        {
+            double closestDist = 1000000.0;
+
+            Vector3 currentVec;
+            foreach(var l in listCells)
+            {
+                currentVec= new Vector3(current.index.X, current.index.Y);
+                var distance = currentVec.DistanceTo(new Vector3(l.index.X, l.index.Y));
+                if(distance < closestDist)
+                    closestDist = distance;
+            }
+            return closestDist;
         }
 
         /// <summary>
