@@ -24,7 +24,7 @@ namespace MJProceduralMass
             var siteModel = inputModels["Site"];
             var siteElement = siteModel.AllElementsOfType<Site>().First();
             var sitePerimeter = siteElement.Perimeter;
-            var offsetPerimeter = sitePerimeter.Offset(-input.SiteSetback).OrderByDescending<Polygon, double>(s=>s.Area()).First();
+            var offsetPerimeter = sitePerimeter.Offset(-input.SiteSetback).OrderByDescending<Polygon, double>(s => s.Area()).First();
 
             var envelopes = new List<Envelope>();
             var polys = new List<ModelCurve>();
@@ -35,20 +35,20 @@ namespace MJProceduralMass
             try
             {
 
-                
-                var obstacles = input.ObstaclePolygons!= null? input.ObstaclePolygons: null;
 
-                bool obstaclesExist = obstacles !=null? true: false;
+                var obstacles = input.ObstaclePolygons != null ? input.ObstaclePolygons : null;
 
-                if(obstaclesExist)
+                bool obstaclesExist = obstacles != null ? true : false;
+
+                if (obstaclesExist)
                 {
-                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, obstacles);
+                    grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, obstacles);
                 }
 
                 else
                 {
-                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight);
-                                
+                    grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight);
+
                 }
                 grid.InitCells(obstaclesExist);
 
@@ -96,7 +96,7 @@ namespace MJProceduralMass
                 var keyList = grid.finalTree.Keys.Count;
 
                 var envMatl = new Material("envelope", new Color(0.27, 0.73, 0.73, 0.6), 0.0f, 0.0f);
-                
+
                 for (int k = 0; k < grid.finalTree.Keys.Count; k++)
                 {
                     var listOfCells = grid.finalTree.Values.ToArray();
@@ -105,66 +105,66 @@ namespace MJProceduralMass
                     {
                         Console.WriteLine($"x: {listOfCells[k][j].index.X} y: {listOfCells[k][j].index.Y}");
                         sPolygon smPoly;
-                        if(grid.GetOrthoActiveNeighbors(listOfCells[k][j], grid.cells).ToList().Count>0)
+                        if (grid.GetOrthoActiveNeighbors(listOfCells[k][j], grid.cells).ToList().Count > 0)
                         {
-                        var poly = new Polygon(new List<Vector3>(){
+                            var poly = new Polygon(new List<Vector3>(){
                             new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Min.Y),
                             new Vector3(listOfCells[k][j].rect.Min.X, listOfCells[k][j].rect.Max.Y),
                             new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Max.Y),
                             new Vector3(listOfCells[k][j].rect.Max.X, listOfCells[k][j].rect.Min.Y)});
 
-                        smPoly = new sPolygon(poly, remappedVals[k]);
-                        smPoly.vIndex = listOfCells[k][j].index;
-                        smPoly.index = listOfCells[k][j].placementOrder;
+                            smPoly = new sPolygon(poly, remappedVals[k]);
+                            smPoly.vIndex = listOfCells[k][j].index;
+                            smPoly.index = listOfCells[k][j].placementOrder;
 
-                        smartPolys.Add(smPoly); 
-                        sketches.Add(new ModelCurve(smPoly.polygon));
+                            smartPolys.Add(smPoly);
+                            sketches.Add(new ModelCurve(smPoly.polygon));
 
-                        var representation = new Representation(new SolidOperation[] { new Extrude(smPoly.polygon, 2.0, Vector3.ZAxis, false) });
-                    var envelope = new Envelope(smPoly.polygon, 0.0, 2.0, Vector3.ZAxis, 0, new Transform(0, 0, 0.0), envMatl, representation, false, Guid.NewGuid(), $"{smPoly.index}");
+                            //     var representation = new Representation(new SolidOperation[] { new Extrude(smPoly.polygon, 2.0, Vector3.ZAxis, false) });
+                            // var envelope = new Envelope(smPoly.polygon, 0.0, 2.0, Vector3.ZAxis, 0, new Transform(0, 0, 0.0), envMatl, representation, false, Guid.NewGuid(), $"{smPoly.index}");
 
-                    envelopes.Add(envelope);
+                            // envelopes.Add(envelope);
 
-                        }  
+                        }
                     }
                 }
 
 
-            ///height/ grouping logic
-            // var distinctHeights = smartPolys.Select(c => c.height).Distinct().OrderBy(d => d);
-            // var currBase = 0.0;
-            // foreach (var height in distinctHeights)
-            // {
-            //     var clinesBelowHeight = smartPolys.Where(c => c.height >= height);
-            //     var individualPolygons = new List<Polygon>();
+                ///height/ grouping logic
+                var distinctHeights = smartPolys.Select(c => c.height).Distinct().OrderBy(d => d);
+                var currBase = 0.0;
+                foreach (var height in distinctHeights)
+                {
+                    var clinesBelowHeight = smartPolys.Where(c => c.height >= height);
+                    var individualPolygons = new List<Polygon>();
 
-            //     foreach (var pg in clinesBelowHeight)
-            //     {
-            //         var thickened = pg.polygon;
+                    foreach (var pg in clinesBelowHeight)
+                    {
+                        var thickened = pg.polygon;
 
-            //         if (thickened.IsClockWise())
-            //             thickened = thickened.Reversed();
+                        if (thickened.IsClockWise())
+                            thickened = thickened.Reversed();
 
-            //         individualPolygons.Add(thickened);
-            //     }
+                        individualPolygons.Add(thickened);
+                    }
 
-            //     var union = individualPolygons.Count > 1 ? Polygon.UnionAll(individualPolygons) : individualPolygons;
+                    var union = individualPolygons.Count > 1 ? Polygon.UnionAll(individualPolygons) : individualPolygons;
 
-            //     foreach (var polygon in union)
-            //     {
-            //         var representation = new Representation(new SolidOperation[] { new Extrude(polygon, height - currBase, Vector3.ZAxis, false) });
-            //         var envelope = new Envelope(polygon, currBase, height - currBase, Vector3.ZAxis, 0, new Transform(0, 0, currBase), envMatl, representation, false, Guid.NewGuid(), "");
+                    foreach (var polygon in union)
+                    {
+                        var representation = new Representation(new SolidOperation[] { new Extrude(polygon, height - currBase, Vector3.ZAxis, false) });
+                        var envelope = new Envelope(polygon, currBase, height - currBase, Vector3.ZAxis, 0, new Transform(0, 0, currBase), envMatl, representation, false, Guid.NewGuid(), "");
 
-            //         envelopes.Add(envelope);
-                    
-            //     }
-            //     currBase = height;
-            // }
-             }
-             catch (Exception e)
-             {
-                 Console.WriteLine(e.ToString());
-             }
+                        envelopes.Add(envelope);
+
+                    }
+                    currBase = height;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
 
             //site percentage cover.
             var siteCover = string.Format("{0}%", grid.grownTree.Count / (elligibleCells.Count * 1.0) * 100);
@@ -231,12 +231,12 @@ namespace MJProceduralMass
 
     }
 
-    public class sPolygon 
+    public class sPolygon
     {
-        public Polygon polygon; 
+        public Polygon polygon;
         public double height;
-        public int index {get; set;}
-        public Vector2dInt vIndex {get; set;}
+        public int index { get; set; }
+        public Vector2dInt vIndex { get; set; }
 
 
         public sPolygon(Polygon polygon, double height)

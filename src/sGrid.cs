@@ -7,25 +7,25 @@ using System.Linq;
 
 namespace MJProceduralMass
 {
-     public class sGrid
-      {
-      private List<(BBox3 cell, double value)> _results = new List<(BBox3 cell, double value)>();
+    public class sGrid
+    {
+        private List<(BBox3 cell, double value)> _results = new List<(BBox3 cell, double value)>();
 
-       public SortedDictionary<Vector2dInt, sCell> cells = new SortedDictionary<Vector2dInt, sCell>();
+        public SortedDictionary<Vector2dInt, sCell> cells = new SortedDictionary<Vector2dInt, sCell>();
 
-       public List<sCell> grownTree;
-       public Dictionary<int, List<sCell>> treeRects;
-       public Dictionary<int, List<sCell>> finalTree;
-       private double targetNumCells;
-       public IList<Polygon> obstacles;
-                /// <summary>
+        public List<sCell> grownTree;
+        public Dictionary<int, List<sCell>> treeRects;
+        public Dictionary<int, List<sCell>> finalTree;
+        private double targetNumCells;
+        public IList<Polygon> obstacles;
+        /// <summary>
         /// The length of the cells in the u direction.
         /// </summary>
         public double cellSize { get; set; }
 
-        public double startingParam {get; set;}
-        public double minHeight {get; set;}
-        public double maxHeight {get; set;}
+        public double startingParam { get; set; }
+        public double minHeight { get; set; }
+        public double maxHeight { get; set; }
 
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace MJProceduralMass
             this.obstacles = obstacles;
         }
 
-           public sGrid(Polygon perimeter,
-                            double cellSize,
-                            double targetNumCells,
-                            double startingParam,
-                            double minHeight,
-                            double maxHeight)
+        public sGrid(Polygon perimeter,
+                         double cellSize,
+                         double targetNumCells,
+                         double startingParam,
+                         double minHeight,
+                         double maxHeight)
         {
             this.Perimeter = perimeter;
             this.cellSize = cellSize;
@@ -77,7 +77,7 @@ namespace MJProceduralMass
             this.maxHeight = maxHeight;
         }
 
-#region initiating cells
+        #region initiating cells
 
         /// <summary>
         /// Initializes a grid2d given a starting index and a site boundary.
@@ -85,7 +85,7 @@ namespace MJProceduralMass
         /// <param name="obstaclesExist"></param>
         public void InitCells(bool obstaclesExist)
         {
-          var bounds = new BBox3(new[] { this.Perimeter });
+            var bounds = new BBox3(new[] { this.Perimeter });
             var x = bounds.Min.X;
             var y = bounds.Min.Y;
 
@@ -137,9 +137,9 @@ namespace MJProceduralMass
                     var roundedPt = new Vector3((int)Math.Round(samplePt.X, 0, MidpointRounding.AwayFromZero),
                       (int)Math.Round(samplePt.Y, 0, MidpointRounding.AwayFromZero));
                     var loc = new Vector3((samplePt.X), (samplePt.Y));
-                    var index = new Vector2dInt((int)Math.Round(roundedPt.X / cellSize), (int)Math.Round(roundedPt.Y /cellSize));
+                    var index = new Vector2dInt((int)Math.Round(roundedPt.X / cellSize), (int)Math.Round(roundedPt.Y / cellSize));
 
-                    if(!Perimeter.Contains(samplePt))
+                    if (!Perimeter.Contains(samplePt))
                         continue;
 
                     else
@@ -198,14 +198,15 @@ namespace MJProceduralMass
             bool firstReturn = true;
             while (localTreeList.Count > 0)
             {
-                
+
                 if (count >= targetNumCells)
                     goto ProcessDict;
-            
-                firstReturn = count==0? true: false;
+
+                firstReturn = count == 0 ? true : false;
 
                 sCell validCell;
-                if (ReturnOne(localTreeList, cells, grownTree, out validCell, firstReturn)){
+                if (ReturnOne(localTreeList, cells, grownTree, out validCell, firstReturn))
+                {
                     Console.WriteLine($"location: x_{validCell.index.X}, y_{validCell.index.Y}");
                     currentCell = validCell;
                     // Console.WriteLine($"current: x: {currentCell.index.X}, y:{currentCell.index.Y}, valid:{validCell.index.X}, y:{validCell.index.Y} ");
@@ -225,7 +226,7 @@ namespace MJProceduralMass
                 {
                     localTreeList.Remove(currentCell);
                     localTreeList.AddRange(validNeighborCells);
-                    
+
 
                     foreach (var vn in validNeighborCells)
                     {
@@ -264,7 +265,7 @@ namespace MJProceduralMass
         }
 
 
-#region Support Functions
+        #region Support Functions
 
         /// <summary>
         /// Checks to see if a given Vector3 is inside a group of curves
@@ -321,25 +322,26 @@ namespace MJProceduralMass
                             Vector2dInt[] l_neighbors = new Vector2dInt[2];
                             int clearanceCounter = 0;
 
-                            if(Math.Abs(cell.index.X - voxel.index.X)< 2){
-
-                            if (xDelta)
+                            if (Math.Abs(cell.index.X - voxel.index.X) < 2)
                             {
-                                l_neighbors[0] = new Vector2dInt(x, y - 1);
-                                l_neighbors[1] = new Vector2dInt(x, y + 1);
-                            }
-                            else
-                            {
-                                l_neighbors[0] = new Vector2dInt(x - 1, y);
-                                l_neighbors[1] = new Vector2dInt(x + 1, y);
-                            }
 
-                            for (int ln = 0; ln < l_neighbors.Length; ln++)
-                                if (dict.TryGetValue(l_neighbors[ln], out localNeigh) && localNeigh.isActive == true)
-                                    clearanceCounter++;
+                                if (xDelta)
+                                {
+                                    l_neighbors[0] = new Vector2dInt(x, y - 1);
+                                    l_neighbors[1] = new Vector2dInt(x, y + 1);
+                                }
+                                else
+                                {
+                                    l_neighbors[0] = new Vector2dInt(x - 1, y);
+                                    l_neighbors[1] = new Vector2dInt(x + 1, y);
+                                }
 
-                            if (clearanceCounter <1)
-                                neighbors.Add(voxel);
+                                for (int ln = 0; ln < l_neighbors.Length; ln++)
+                                    if (dict.TryGetValue(l_neighbors[ln], out localNeigh) && localNeigh.isActive == true)
+                                        clearanceCounter++;
+
+                                if (clearanceCounter < 1)
+                                    neighbors.Add(voxel);
                             }
                         }
                     }
@@ -350,7 +352,7 @@ namespace MJProceduralMass
 
         }
 
-         public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell, bool firstReturn)
+        public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell, bool firstReturn)
         {
             bool canDo = false;
             outputCell = new sCell();
@@ -361,11 +363,11 @@ namespace MJProceduralMass
 
                 if (placementLocs.Count > 0)
                 {
-                   // if(firstReturn)
+                    // if(firstReturn)
                     {
-                    outputCell = listCells[i];
-                    canDo = true;
-                    return canDo;
+                        outputCell = listCells[i];
+                        canDo = true;
+                        return canDo;
                     }
 
                     // else
@@ -390,11 +392,11 @@ namespace MJProceduralMass
             double closestDist = 1000000.0;
 
             Vector3 currentVec;
-            foreach(var l in listCells)
+            foreach (var l in listCells)
             {
-                currentVec= new Vector3(current.index.X, current.index.Y);
+                currentVec = new Vector3(current.index.X, current.index.Y);
                 var distance = currentVec.DistanceTo(new Vector3(l.index.X, l.index.Y));
-                if(distance < closestDist)
+                if (distance < closestDist)
                     closestDist = distance;
             }
             return closestDist;
@@ -404,7 +406,7 @@ namespace MJProceduralMass
         /// Processes branches and turns them into clusters.
         /// </summary>
         /// <param name="dict"></param>
-         public void ProcessGroups(SortedDictionary<Vector2dInt, sCell> dict)
+        public void ProcessGroups(SortedDictionary<Vector2dInt, sCell> dict)
         {
             treeRects = new Dictionary<int, List<sCell>>();
             var tempList = new List<sCell>();
@@ -420,13 +422,13 @@ namespace MJProceduralMass
             sCell current = newDict.Values.Where(s => s.isActive).ToList()[0];
 
             int count = 0;
-     
+
             while (tempList.Count > 0)
             {
                 current = tempList[0];
                 var neighbors = GetOrthoActiveNeighbors(current, newDict);
                 //var internalList = current;
-                
+
                 if (neighbors.Count > 0)
                 {
                     //internalList.Add(current);
@@ -437,14 +439,14 @@ namespace MJProceduralMass
                         treeRects[count] = existingList;
                     }
                     else
-                        treeRects.Add(count, new List<sCell>(){current});
+                        treeRects.Add(count, new List<sCell>() { current });
 
-                    
+
                     tempList.Remove(current);
                     newDict.Remove(current.index);
                     var neighRects = neighbors.Select(s => s).ToList();
 
-                    if(treeRects.TryGetValue(count, out existingList))
+                    if (treeRects.TryGetValue(count, out existingList))
                     {
                         existingList.AddRange(neighRects);
                         treeRects[count] = existingList;
@@ -463,13 +465,13 @@ namespace MJProceduralMass
                     //internalList.Add(current);
 
                     List<sCell> existingList;
-                    if(treeRects.TryGetValue(count, out existingList))
+                    if (treeRects.TryGetValue(count, out existingList))
                     {
                         existingList.Add(current);
                         treeRects[count] = existingList;
                     }
                     else
-                        treeRects.Add(count, new List<sCell>(){current});
+                        treeRects.Add(count, new List<sCell>() { current });
 
                     tempList.Remove(current);
                     newDict.Remove(current.index);
@@ -483,12 +485,12 @@ namespace MJProceduralMass
             var valArray = treeRects.Values.ToArray();
             for (int i = 0; i < treeRects.Keys.Count; i++)
             {
-                if(valArray[i].Count == 1)
+                if (valArray[i].Count == 1)
                 {
                     var index = FindNearestTreeIndex(valArray[i][0].rect, treeRects);
 
-                     if(index==-1)
-                         continue;
+                    if (index == -1)
+                        continue;
 
                     List<sCell> existingList;
                     if (finalTree.TryGetValue(index, out existingList))
@@ -506,13 +508,14 @@ namespace MJProceduralMass
 
                 else
                 {
-                     List<sCell> existingList;
+                    List<sCell> existingList;
                     if (finalTree.TryGetValue(i, out existingList))
                     {
                         existingList.AddRange(valArray[i]);
                         finalTree[i] = existingList;
                     }
-                    else{
+                    else
+                    {
 
                         var newList = new List<sCell>();
                         newList.AddRange(valArray[i]);
@@ -528,16 +531,16 @@ namespace MJProceduralMass
         /// <param name="rect"></param>
         /// <param name="tree"></param>
         /// <returns></returns>
-          public int FindNearestTreeIndex(BBox3 rect, Dictionary <int, List<sCell>> tree)
+        public int FindNearestTreeIndex(BBox3 rect, Dictionary<int, List<sCell>> tree)
         {
             int val = -1;
 
             List<PointSorter> pts = new List<PointSorter>();
             int count = 0;
 
-            foreach(KeyValuePair<int, List<sCell>> kp in tree)
+            foreach (KeyValuePair<int, List<sCell>> kp in tree)
             {
-                for(int k = 0; k< kp.Value.Count; k++)
+                for (int k = 0; k < kp.Value.Count; k++)
                 {
                     var dist = rect.Center().DistanceTo(kp.Value[k].rect.Center());
                     if (dist < 0.01)
