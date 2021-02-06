@@ -195,17 +195,14 @@ namespace MJProceduralMass
             localTreeList.Add(startCell);
 
             sCell currentCell;
-            bool firstReturn = true;
             while (localTreeList.Count > 0)
             {
 
                 if (count >= targetNumCells)
                     goto ProcessDict;
 
-                firstReturn = count == 0 ? true : false;
-
                 sCell validCell;
-                if (ReturnOne(localTreeList, cells, grownTree, out validCell, firstReturn))
+                if (ReturnOne(localTreeList, cells, grownTree, out validCell))
                 {
                     Console.WriteLine($"location: x_{validCell.index.X}, y_{validCell.index.Y}");
                     currentCell = validCell;
@@ -352,7 +349,7 @@ namespace MJProceduralMass
 
         }
 
-        public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell, bool firstReturn)
+        public bool ReturnOne(List<sCell> listCells, SortedDictionary<Vector2dInt, sCell> dict, List<sCell> cellsCheckAgainst, out sCell outputCell)
         {
             bool canDo = false;
             outputCell = new sCell();
@@ -363,43 +360,12 @@ namespace MJProceduralMass
 
                 if (placementLocs.Count > 0)
                 {
-                    // if(firstReturn)
-                    {
                         outputCell = listCells[i];
                         canDo = true;
                         return canDo;
-                    }
-
-                    // else
-                    // {
-                    // var closestDist = DistanceToClosestCell(dict.Values.Where(s=>s.isActive==true).Select(s=>s).ToList(), listCells[i]);
-                    // Console.WriteLine("closestDist: " + closestDist);
-                    // if(closestDist == 1)
-                    // {
-                    // outputCell = listCells[i];
-                    // canDo = true;
-                    // return canDo;
-                    // }
-                    // }
                 }
             }
             return canDo;
-
-        }
-
-        public double DistanceToClosestCell(List<sCell> listCells, sCell current)
-        {
-            double closestDist = 1000000.0;
-
-            Vector3 currentVec;
-            foreach (var l in listCells)
-            {
-                currentVec = new Vector3(current.index.X, current.index.Y);
-                var distance = currentVec.DistanceTo(new Vector3(l.index.X, l.index.Y));
-                if (distance < closestDist)
-                    closestDist = distance;
-            }
-            return closestDist;
         }
 
         /// <summary>
