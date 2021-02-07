@@ -31,26 +31,13 @@ namespace MJProceduralMass
             var elligibleCells = new List<sCell>();
             sGrid grid = null;
             List<sPolygon> smartPolys = new List<sPolygon>();
-            List<ModelCurve> sketches = new List<ModelCurve>();
+            //List<ModelCurve> sketches = new List<ModelCurve>();
             try
             {
 
-
-                var obstacles = input.ObstaclePolygons != null ? input.ObstaclePolygons : null;
-
-                bool obstaclesExist = obstacles != null ? true : false;
-
-                if (obstaclesExist)
-                {
-                    grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, obstacles);
-                }
-
-                else
-                {
-                    grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight);
-
-                }
-                grid.InitCells(obstaclesExist);
+                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
+                
+                grid.InitCells();
 
 
                 //init start index
@@ -118,7 +105,7 @@ namespace MJProceduralMass
                             smPoly.index = listOfCells[k][j].placementOrder;
 
                             smartPolys.Add(smPoly);
-                            sketches.Add(new ModelCurve(smPoly.polygon));
+                           // sketches.Add(new ModelCurve(smPoly.polygon));
 
                             //     var representation = new Representation(new SolidOperation[] { new Extrude(smPoly.polygon, 2.0, Vector3.ZAxis, false) });
                             // var envelope = new Envelope(smPoly.polygon, 0.0, 2.0, Vector3.ZAxis, 0, new Transform(0, 0, 0.0), envMatl, representation, false, Guid.NewGuid(), $"{smPoly.index}");
@@ -171,7 +158,7 @@ namespace MJProceduralMass
 
             var output = new MJProceduralMassOutputs(grid.grownTree.Count, siteCover, grid.cellSize);
 
-            output.Model.AddElements(sketches);
+           // output.Model.AddElements(sketches);
 
             //envelopes
             output.Model.AddElements(envelopes);
@@ -181,7 +168,8 @@ namespace MJProceduralMass
             //obstacle outputs
             var grayMat = new Material("greenery", new Color(0.44, 0.44, 0.44, 0.6), 0.0f, 0.0f);
 
-            output.Model.AddElements(input.ObstaclePolygons.Select(s => new Mass(s, 2, grayMat)));
+            if(input.ObstaclePolygons!= null)
+                output.Model.AddElements(input.ObstaclePolygons.Select(s => new Mass(s, 2, grayMat)));
 
             return output;
         }

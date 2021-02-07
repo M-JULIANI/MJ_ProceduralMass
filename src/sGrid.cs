@@ -17,7 +17,7 @@ namespace MJProceduralMass
         public Dictionary<int, List<sCell>> treeRects;
         public Dictionary<int, List<sCell>> finalTree;
         private double targetNumCells;
-        public IList<Polygon> obstacles;
+        public List<Polygon> _obstacles = null;
         /// <summary>
         /// The length of the cells in the u direction.
         /// </summary>
@@ -49,32 +49,24 @@ namespace MJProceduralMass
                             double startingParam,
                             double minHeight,
                             double maxHeight,
-                            IList<Polygon> obstacles)
+                            IList<Polygon> obstacles = null)
         {
             this.Perimeter = perimeter;
             this.cellSize = cellSize;
-            this.obstacles = obstacles;
             this.targetNumCells = targetNumCells;
             this.startingParam = startingParam;
             this.minHeight = minHeight;
             this.maxHeight = maxHeight;
-            this.obstacles = obstacles;
-        }
 
-        public sGrid(Polygon perimeter,
-                         double cellSize,
-                         double targetNumCells,
-                         double startingParam,
-                         double minHeight,
-                         double maxHeight)
-        {
-            this.Perimeter = perimeter;
-            this.cellSize = cellSize;
-            this.obstacles = null;
-            this.targetNumCells = targetNumCells;
-            this.startingParam = startingParam;
-            this.minHeight = minHeight;
-            this.maxHeight = maxHeight;
+            
+            if(obstacles!= null){
+                _obstacles = new List<Polygon>();
+                foreach(var o in obstacles)
+                _obstacles.Add(o);
+            }
+                
+            
+
         }
 
         #region initiating cells
@@ -83,7 +75,7 @@ namespace MJProceduralMass
         /// Initializes a grid2d given a starting index and a site boundary.
         /// </summary>
         /// <param name="obstaclesExist"></param>
-        public void InitCells(bool obstaclesExist)
+        public void InitCells()
         {
             var bounds = new BBox3(new[] { this.Perimeter });
             var x = bounds.Min.X;
@@ -144,24 +136,15 @@ namespace MJProceduralMass
 
                     else
                     {
-                        if (obstaclesExist == false)
+                        if(_obstacles!= null && _obstacles.Count>0)
                         {
-                            var _cell = new sCell(loc, cellSize);
-                            sCell cellExisting;
-                            if (cells.TryGetValue(_cell.index, out cellExisting))
-                                continue;
-                            else
-                                cells.Add(_cell.index, _cell);
-                        }
-                        else
-                        {
-                            if (InsideCrvsGroup(samplePt, obstacles) == true)
+                            if (InsideCrvsGroup(samplePt, _obstacles) == true)
                                 continue;
                             else
                             {
-                                for (int c = 0; c < obstacles.Count; c++)
+                                for (int c = 0; c < _obstacles.Count; c++)
                                 {
-                                    if (!obstacles[c].Contains(samplePt))
+                                    if (!_obstacles[c].Contains(samplePt))
                                     {
                                         var _cell = new sCell(loc, cellSize);
                                         sCell cellExisting;
@@ -172,6 +155,15 @@ namespace MJProceduralMass
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            var _cell = new sCell(loc, cellSize);
+                            sCell cellExisting;
+                            if (cells.TryGetValue(_cell.index, out cellExisting))
+                                continue;
+                            else
+                                cells.Add(_cell.index, _cell);
                         }
                     }
                 }
@@ -270,7 +262,7 @@ namespace MJProceduralMass
         /// <param name="samplePt"></param>
         /// <param name="obstacleCrvs"></param>
         /// <returns></returns>
-        private bool InsideCrvsGroup(Vector3 samplePt, IList<Polygon> obstacleCrvs)
+        private bool InsideCrvsGroup(Vector3 samplePt, List<Polygon> obstacleCrvs)
         {
             bool invalid = false;
             for (int i = 0; i < obstacleCrvs.Count; i++)

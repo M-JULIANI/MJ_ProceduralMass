@@ -65,7 +65,7 @@ namespace MJProceduralMass
         /// <summary>Starting cell parameter (from 0.0-1.0)</summary>
         [Newtonsoft.Json.JsonProperty("StartingLocation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.Range(0D, 1D)]
-        public double StartingLocation { get; set; } = 0.5D;
+        public double StartingLocation { get; set; } = 0.75D;
     
         /// <summary>Height randomness</summary>
         [Newtonsoft.Json.JsonProperty("HeightJitter", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -74,8 +74,8 @@ namespace MJProceduralMass
     
         /// <summary>Range for size of cell</summary>
         [Newtonsoft.Json.JsonProperty("CellSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(6D, 25D)]
-        public double CellSize { get; set; } = 8D;
+        [System.ComponentModel.DataAnnotations.Range(15D, 20D)]
+        public double CellSize { get; set; } = 18D;
     
         /// <summary>Max Height to procedural mass.</summary>
         [Newtonsoft.Json.JsonProperty("MaxHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]

@@ -35,7 +35,7 @@
       },
       "StartingLocation": {
         "multipleOf": 0.01,
-        "default": 0.5,
+        "default": 0.75,
         "maximum": 1,
         "description": "Starting cell parameter (from 0.0-1.0)",
         "type": "number",
@@ -53,12 +53,12 @@
       },
       "CellSize": {
         "multipleOf": 0.1,
-        "default": 8,
-        "maximum": 25,
+        "default": 18,
+        "maximum": 20,
         "description": "Range for size of cell",
         "type": "number",
         "$hyparOrder": 3,
-        "minimum": 6
+        "minimum": 15
       },
       "MaxHeight": {
         "multipleOf": 1,
