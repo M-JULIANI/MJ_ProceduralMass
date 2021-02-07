@@ -5,3 +5,5 @@ obj/
 output.json
 input.json
 .vs/**/*.*
+dependencies/Envelope.g.cs
+dependencies/Site.g.cs
