@@ -53,12 +53,12 @@
       },
       "CellSize": {
         "multipleOf": 0.1,
-        "default": 10,
-        "maximum": 15,
+        "default": 18,
+        "maximum": 20,
         "description": "Range for size of cell",
         "type": "number",
         "$hyparOrder": 3,
-        "minimum": 8
+        "minimum": 17
       },
       "MaxHeight": {
         "multipleOf": 1,
