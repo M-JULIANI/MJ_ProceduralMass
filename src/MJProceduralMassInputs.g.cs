@@ -74,8 +74,8 @@ namespace MJProceduralMass
     
         /// <summary>Range for size of cell</summary>
         [Newtonsoft.Json.JsonProperty("CellSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.Range(8D, 15D)]
-        public double CellSize { get; set; } = 10D;
+        [System.ComponentModel.DataAnnotations.Range(17D, 20D)]
+        public double CellSize { get; set; } = 18D;
     
         /// <summary>Max Height to procedural mass.</summary>
         [Newtonsoft.Json.JsonProperty("MaxHeight", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]

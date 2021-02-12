@@ -84,7 +84,7 @@ namespace MJProceduralMass
             var minPoint = bounds.Min;
 
             int max = 100;
-            int min = 5;
+            int min = 2;
             var rangeX = bounds.Max.X - bounds.Min.X;
             var rangeY = bounds.Max.Y - bounds.Min.Y;
 

@@ -35,7 +35,7 @@ namespace MJProceduralMass
             try
             {
 
-                grid = new sGrid(offsetPerimeter, input.CellSize, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
+                grid = new sGrid(offsetPerimeter, 20, input.TargetCellCount, input.StartingLocation, input.MinHeight, input.MaxHeight, input.ObstaclePolygons);
                 
                 grid.InitCells();
 
@@ -140,6 +140,7 @@ namespace MJProceduralMass
                     foreach (var polygon in union)
                     {
                         var representation = new Representation(new SolidOperation[] { new Extrude(polygon, height - currBase, Vector3.ZAxis, false) });
+
                         var envelope = new Envelope(polygon, currBase, height - currBase, Vector3.ZAxis, 0, new Transform(0, 0, currBase), envMatl, representation, false, Guid.NewGuid(), "");
 
                         envelopes.Add(envelope);
@@ -164,6 +165,8 @@ namespace MJProceduralMass
             output.Model.AddElements(envelopes);
             //site boundary curve
             output.Model.AddElement(new ModelCurve(offsetPerimeter));
+            output.Model.AddElement(new ProceduralMassData(grid.cellSize, Guid.NewGuid(), "ProceduralCellSize"));
+
 
             //obstacle outputs
             var grayMat = new Material("greenery", new Color(0.44, 0.44, 0.44, 0.6), 0.0f, 0.0f);
