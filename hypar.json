@@ -2,7 +2,7 @@
   "$schema": "https://hypar.io/Schemas/Function.json",
   "id": "38d6e371-c600-40bc-a7b6-4f9e93ff8eee",
   "name": "MJ_ProceduralMass",
-  "description": "Generates a procedural massing for a residential/office building.",
+  "description": "Generates a procedural massing for a residential/office building. See sample workflow: https://hypar.io/workflows/0c29a4f5-4e8e-4f55-8101-14eafb8a2c8e.",
   "language": "C#",
   "model_dependencies": [
     {

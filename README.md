@@ -2,7 +2,7 @@
 
 # MJ_ProceduralMass
 
-Generates a procedural massing for a residential/office building.
+Generates a procedural massing for a residential/office building. See sample workflow: https://hypar.io/workflows/0c29a4f5-4e8e-4f55-8101-14eafb8a2c8e.
 
 |Input Name|Type|Description|
 |---|---|---|
