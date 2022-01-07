@@ -389,7 +389,6 @@ namespace MJProceduralMass
 
                 if (neighbors.Count > 0)
                 {
-                    //internalList.Add(current);
                     List<sCell> existingList;
                     if (treeRects.TryGetValue(count, out existingList))
                     {
@@ -420,8 +419,6 @@ namespace MJProceduralMass
                 }
                 else
                 {
-                    //internalList.Add(current);
-
                     List<sCell> existingList;
                     if (treeRects.TryGetValue(count, out existingList))
                     {
