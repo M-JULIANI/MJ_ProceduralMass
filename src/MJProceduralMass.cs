@@ -105,13 +105,6 @@ namespace MJProceduralMass
                             smPoly.index = listOfCells[k][j].placementOrder;
 
                             smartPolys.Add(smPoly);
-                           // sketches.Add(new ModelCurve(smPoly.polygon));
-
-                            //     var representation = new Representation(new SolidOperation[] { new Extrude(smPoly.polygon, 2.0, Vector3.ZAxis, false) });
-                            // var envelope = new Envelope(smPoly.polygon, 0.0, 2.0, Vector3.ZAxis, 0, new Transform(0, 0, 0.0), envMatl, representation, false, Guid.NewGuid(), $"{smPoly.index}");
-
-                            // envelopes.Add(envelope);
-
                         }
                     }
                 }
@@ -219,23 +212,5 @@ namespace MJProceduralMass
             this.dist = dist;
             this.index = index;
         }
-
     }
-
-    public class sPolygon
-    {
-        public Polygon polygon;
-        public double height;
-        public int index { get; set; }
-        public Vector2dInt vIndex { get; set; }
-
-
-        public sPolygon(Polygon polygon, double height)
-        {
-            this.polygon = polygon;
-            this.height = height;
-        }
-    }
-
-
 }
